@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>CodePen - Angular with Server</title>
+
+  <style>.red {
+  color: red;  
+}</style>
+
+</head>
+
+<body>
+
+  <div  ng-app="app" id="app">
+  <!-- invoke controller function defined in javascript to create necessay data varible used inside scope -->
+  <div ng-controller="createUserController">
+    <div id="messages" ng-show="form.message">{{ form.message }}</div>
+    <!-- form action="http://localhost:5000/users" method="post" ng-submit="createUser()" --> 
+    <form ng-submit="createUser()"> 
+      <div ng-class="{ 'red':form.errors.email }"> 
+        <input type="text" name="email" placeholder="email" ng-model="form.inputs.email"> 
+        <span ng-show="form.errors.email">{{ form.errors.email }}</span> 
+      </div>
+
+      <div ng-class="{ 'red':errorSuperhero }"> 
+          <input type="text" name="password" placeholder="password" ng-model="form.inputs.password"> 
+          <span ng-show="form.errors.password">{{ form.errors.password }}</span> 
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <div id="outer" ng-controller="getUsersController">
+    <p>Response Status: {{status}}</p>
+    <ul>
+      <!-- loop and phones is varible created by contoller function -->
+      <li ng-repeat="user in users">
+        <span>{{user.email}}</span>, <span>{{user.password}}</span>
+      </li>
+    </ul>
+
+    <!-- use ng-click to invoke angular event to change scope data -->
+    <button ng-click="delUser()">Use ng-click</button>
+    <!-- use regular event and $scope.$apply() -->
+    <button onclick="delUser()">Use $scope.$apply</button>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+
+  <script>
+    var app = angular.module('app', []);
+app.controller('getUsersController', function ($scope, $http) {
+  $scope.getUsers = function() {
+    $http.jsonp('http://localhost:5000/users?callback=JSON_CALLBACK').
+      success(function (data) {$scope.getUsersSuccess(data)}).
+      error(function (data) {$scope.error(data)});
+
+    data = [{"email":"fei@me.com", "password":"fei"}, {"email":"luo@me.com", "password":"luo"}];$scope.getUsersSuccess(data);
+  }
+  $scope.getUsersSuccess = function(data) {
+    $scope.status = "success";
+    $scope.users = data;
+  }
+
+  $scope.delUser = function() {
+    $scope.users.pop();
+  };
+
+  $scope.error = function(data) {
+    $scope.status = "error";
+  }
+
+  $scope.getUsers();
+});
+
+app.controller('createUserController', function ($scope, $http) {
+  $scope.form = {"inputs": {}, "errors": {}};
+
+  $scope.createUser = function() {
+    $http.post('http://localhost:5000/users', $scope.form.inputs).
+      success(function(resp) {$scope.createUserSuccess(resp);});
+
+    resp = {"message": "Welcome" };
+    //resp = {"errors": {"email": "Invalid Email"} };
+    $scope.createUserSuccess(resp);
+  };
+  $scope.createUserSuccess = function(resp) {
+    if (resp.errors) {
+      // if not successful, bind errors to error variables
+      $scope.form.errors = resp.errors;
+    } else {
+      // if successful, bind success message to message
+      $scope.form.message = resp.message;
+      refresh();
+    }
+  };
+
+  $scope.error = function(resp) {
+    $scope.status = "error";
+  }
+});
+
+// use $scope.$apply to update scope data with non-scope function
+function delUser() {
+  var appElement = $('[ng-controller=getUsersController]');
+  var appScope = angular.element(appElement).scope();
+  appScope.$apply(function(){
+    appScope.users.pop();
+  })
+}
+
+// use $scope.$apply to update scope data with non-scope function
+function refresh() {
+  var appElement = $('[ng-controller=getUsersController]');
+  var appScope = angular.element(appElement).scope();
+  appScope.$apply(function(){
+    appScope.getUsers();
+  })
+}
+
+    //@ sourceURL=pen.js
+  </script>
+
+</body>
+
+</html>
