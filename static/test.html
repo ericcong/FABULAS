@@ -8,76 +8,135 @@
 
   <title>CodePen - Angular with Server</title>
 
-  <style>.red {
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <style>@import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css");
+@import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css");
+
+.red {
   color: red;  
-}</style>
+}
+
+.page-header {
+  text-align: center;
+  padding-top: 0em;
+  margin-top: 0em;
+}
+.page-header h2, small {
+  padding: 0.2em;
+  margin: 0em;
+}
+
+</style>
 
 </head>
 
 <body>
 
-  <div  ng-app="app" id="app">
-  <!-- invoke controller function defined in javascript to create necessay data varible used inside scope -->
-  <div ng-controller="createUserController">
-    <div id="messages" ng-show="form.message">{{ form.message }}</div>
-    <!-- form action="http://localhost:5000/users" method="post" ng-submit="createUser()" --> 
-    <form ng-submit="createUser()"> 
-      <div ng-class="{ 'red':form.errors.email }"> 
-        <input type="text" name="email" placeholder="email" ng-model="form.inputs.email"> 
-        <span ng-show="form.errors.email">{{ form.errors.email }}</span> 
+  <div class="page-header">
+  <h2>FABuLAS</h2><small>Flask-Angular-Boostrap-YOU-Linux-Apache-SQL</small> 
+</div>
+<div  ng-app="app" id="app" class="container">
+  <!-- controller create necessay data varible used inside scope -->
+  <div ng-controller="createUserController" class="container">
+    <h4>Create User</h4>
+    <!-- set action and method for regular form submt -->
+    <form action="/users" method="post" role="form"> 
+      <div ng-class="{'red':errors.email}" class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span><input type="text" name="email" placeholder="Email" ng-model="inputs.email" class="form-control"> 
+        </div>
+        <span ng-show="errors.email">{{errors.email}}</span> 
       </div>
 
-      <div ng-class="{ 'red':errorSuperhero }"> 
-          <input type="text" name="password" placeholder="password" ng-model="form.inputs.password"> 
-          <span ng-show="form.errors.password">{{ form.errors.password }}</span> 
+      <div ng-class="{'red':errors.password}" class="form-group"> 
+        <div class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span><input type="text" name="password" placeholder="Password" ng-model="inputs.password" class="form-control"> 
+        </div>
+        <span ng-show="errors.password">{{errors.password}}</span> 
       </div>
 
-      <button type="submit">Submit</button>
+      <!-- <button type="submit">Sync Submit</button> -->
+      <button type="button" ng-click="createUser()" class="btn btn-primary">Register</button>
     </form>
   </div>
 
-  <div id="outer" ng-controller="getUsersController">
-    <p>Response Status: {{status}}</p>
-    <ul>
+  <!-- another controller -->
+  <div ng-controller="getUsersController" class="container">
+    <h4>Search User</h4>
+    <div class="input-group">
+      <input type="text" placeholder="Email" ng-model="query" class="form-control" />
+      <span class="input-group-btn">
+        <button ng-click="queryUsers()" class="btn btn-default">Search</button>
+      </span>
+    </div>
+    <h5 class="form-group">The following are users retrieved from server:</h5>
+    <input ng-model="keyword" placeholder="Keyword" class="form-control form-group">    
+    <ul class="list-group">
       <!-- loop and phones is varible created by contoller function -->
-      <li ng-repeat="user in users">
-        <span>{{user.email}}</span>, <span>{{user.password}}</span>
+      <li ng-repeat="user in users | filter:keyword" class="list-group-item">
+        <span ng-click="deleteUser({{user.id}})" class="badge">x</span>
+        <span>{{user.id}}</span> - <span>{{user.email}}</span>
       </li>
     </ul>
-
-    <!-- use ng-click to invoke angular event to change scope data -->
-    <button ng-click="delUser()">Use ng-click</button>
-    <!-- use regular event and $scope.$apply() -->
-    <button onclick="delUser()">Use $scope.$apply</button>
   </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/angular.min.js"></script>
 
   <script>
     var app = angular.module('app', []);
 app.controller('getUsersController', function ($scope, $http) {
+
   $scope.getUsers = function() {
-    $http.jsonp('http://localhost:5000/users?callback=JSON_CALLBACK').
-      success(function (data) {$scope.getUsersSuccess(data)}).
-      error(function (data) {$scope.error(data)});
+    //$http.get('users).
+    //use jsonp instead of get to do local quick prototype
+    $http.jsonp('/json/users?callback=JSON_CALLBACK').
+      success(function (resp) {$scope.getUsersSuccess(resp)}).
+      error(function (resp) {$scope.error(resp)});
 
-    data = [{"email":"fei@me.com", "password":"fei"}, {"email":"luo@me.com", "password":"luo"}];$scope.getUsersSuccess(data);
+    //simulate with fake response
+    //$scope.getUsersSuccess({"data": [{"email":"fei@me.com", "password":"fei"}]}, "message":"Users Retrieved");
   }
-  $scope.getUsersSuccess = function(data) {
-    $scope.status = "success";
-    $scope.users = data;
+  $scope.queryUsers = function() {
+    if ($scope.query) {
+      //$http.get('users/query?email='+$scope.query).
+      //use jsonp instead of get to do local quick prototype
+      $http.jsonp('/json/users/query?callback=JSON_CALLBACK&'+'email='+$scope.query).
+        success(function (resp) {$scope.getUsersSuccess(resp)}).
+        error(function (resp) {$scope.error(resp)});
+    } else {
+      $scope.getUsers();
+    }
+  }
+  $scope.getUsersSuccess = function(resp) {
+    if (resp.errors) $scope.errors = resp.errors;
+    if (resp.message) $scope.message = resp.message;
+    if (resp.data) $scope.users = resp.data;
+    console.log("users loaded");
   }
 
-  $scope.delUser = function() {
-    $scope.users.pop();
-  };
+  $scope.deleteUser = function(id) {
+    //$http.delete('/users/'+id).
+    //use jsonp with special url to do quick local test
+    $http.jsonp('/json/users/delete/'+id+'?callback=JSON_CALLBACK').
+      success(function (resp) {$scope.deleteUsersSuccess(resp)}).
+      error(function (resp) {$scope.error(resp)});    
+  }
+  $scope.deleteUsersSuccess = function(resp) {
+    if (resp.errors) $scope.errors = resp.errors;
+    if (resp.message) $scope.message = resp.message;
+    console.log("user deleted");
+    //make sure get users after delete completed
+    $scope.getUsers();
+  }
 
   $scope.error = function(data) {
     $scope.status = "error";
   }
 
+  //initial users load
   $scope.getUsers();
 });
 
@@ -85,22 +144,20 @@ app.controller('createUserController', function ($scope, $http) {
   $scope.form = {"inputs": {}, "errors": {}};
 
   $scope.createUser = function() {
-    $http.post('http://localhost:5000/users', $scope.form.inputs).
+    //$http.post('/users', $scope.form.inputs).
+    //use jsonp and special get to do local quick prototype
+    $http.jsonp('/json/users/create?callback=JSON_CALLBACK&'+decodeURIComponent($.param($scope.inputs))).
       success(function(resp) {$scope.createUserSuccess(resp);});
 
-    resp = {"message": "Welcome" };
-    //resp = {"errors": {"email": "Invalid Email"} };
-    $scope.createUserSuccess(resp);
+    //use fake response to simulate
+    //resp = {"errors": {"email": "Invalid Email"}, "message": "Errors"};
+    //$scope.createUserSuccess(resp);
   };
   $scope.createUserSuccess = function(resp) {
-    if (resp.errors) {
-      // if not successful, bind errors to error variables
-      $scope.form.errors = resp.errors;
-    } else {
-      // if successful, bind success message to message
-      $scope.form.message = resp.message;
-      refresh();
-    }
+    if (resp.errors) $scope.errors = resp.errors;
+    if (resp.message) $scope.message = resp.message;
+    // invoke another controller
+    refresh();
   };
 
   $scope.error = function(resp) {
@@ -108,24 +165,21 @@ app.controller('createUserController', function ($scope, $http) {
   }
 });
 
-// use $scope.$apply to update scope data with non-scope function
-function delUser() {
-  var appElement = $('[ng-controller=getUsersController]');
-  var appScope = angular.element(appElement).scope();
-  appScope.$apply(function(){
-    appScope.users.pop();
-  })
-}
-
-// use $scope.$apply to update scope data with non-scope function
+// NO need to use $scope.$apply with scope function
 function refresh() {
   var appElement = $('[ng-controller=getUsersController]');
   var appScope = angular.element(appElement).scope();
-  appScope.$apply(function(){
-    appScope.getUsers();
-  })
+  appScope.getUsers();
 }
 
+// use $scope.$apply to update scope data with non-scope function
+function setMessage(msg) {
+  var appElement = $('[ng-controller=createUsersController]');
+  var appScope = angular.element(appElement).scope();
+  appScope.$apply(function(){
+    appScope.message = msg;
+  })
+}
     //@ sourceURL=pen.js
   </script>
 

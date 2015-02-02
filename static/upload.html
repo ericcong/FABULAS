@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>CodePen - File Upload</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <style>
+    label {
+      display: inline-block;
+      width: 48%;
+      height: 140px;
+      border: 1px solid black;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      background-origin: border-box;
+      padding-top: 56px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    input[type=file] {
+      display: none;
+    }  
+</style>
+
+</head>
+
+<body>
+
+  <div>
+    <label><input type="file" name="files" capture data-url="/upload" /><span>+</span></label>
+    <label><input type="file" name="files" capture data-url="/upload" /><span>+</span></label>
+    <label><input type="file" name="files" capture data-url="/upload" /><span>+</span></label>
+    <label><input type="file" name="files" capture data-url="/upload" /><span>+</span></label>
+  </div>
+
+  <script src="/static/js/jquery.min.js"></script>
+  <script src="/static/js/jquery.ui.widget.js"></script>
+  <script src="/static/js/jquery.iframe-transport.js"></script>
+  <script src="/static/js/jquery.fileupload.js"></script>
+
+  <script>
+    $(function () {
+        $('input[type=file]').fileupload({
+            dataType: 'json',
+            add: function (e, data) {
+              data.context = $(e.target);
+              data.submit();
+            },            
+            progress: function (e, data) {
+              var progress = parseInt(data.loaded / data.total * 100, 10);
+              data.context.next().text(progress + '%');
+            },
+            done: function (e, data) {
+              // data.context.parent().text(data.result.files[0].name);
+              data.context.next().text('Uploaded');
+            }
+        });
+    });
+
+    $("input[type=file]").change(function(e){
+      var reader = new FileReader();
+      var label = $(e.target).parent();
+      reader.onload = (function () {
+        return function (e) {
+          console.log(e.target.result);
+          label.css('background-image', 'url('+e.target.result+')');
+        }
+      })();
+      
+      file = e.target.files[0];
+      console.log(file.name);
+      console.log(file.size);
+      reader.readAsDataURL(file);
+    });
+
+  </script>
+
+</body>
+
+</html>
