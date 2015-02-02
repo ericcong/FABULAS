@@ -8,6 +8,7 @@
 
   <title>CodePen - Angular with Server</title>
 
+  <base href="http://localhost:5000">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   <style>@import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css");
@@ -27,7 +28,9 @@
   margin: 0em;
 }
 
-</style>
+form button {
+  float: right;
+}</style>
 
 </head>
 
@@ -38,13 +41,17 @@
 </div>
 <div  ng-app="app" id="app" class="container">
   <!-- controller create necessay data varible used inside scope -->
-  <div ng-controller="createUserController" class="container">
-    <h4>Create User</h4>
+  <div ng-controller="logoutController" class="container" ng-show="global.user">
+      <a ng-click="logout()">Logout</a>
+  </div>
+  <!-- controller create necessay data varible used inside scope -->
+  <div ng-controller="loginController" class="container" ng-show="! (global.user)">
+    <h4>Login</h4>
     <!-- set action and method for regular form submt -->
-    <form action="/users" method="post" role="form"> 
+    <form action="/login" method="post" role="form"> 
       <div ng-class="{'red':errors.email}" class="form-group">
         <div class="input-group">
-          <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span><input type="text" name="email" placeholder="Email" ng-model="inputs.email" class="form-control"> 
+          <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span><input type="text" name="username" placeholder="Email" ng-model="inputs.username" class="form-control"> 
         </div>
         <span ng-show="errors.email">{{errors.email}}</span> 
       </div>
@@ -57,12 +64,38 @@
       </div>
 
       <!-- <button type="submit">Sync Submit</button> -->
-      <button type="button" ng-click="createUser()" class="btn btn-primary">Register</button>
+      <button type="button" ng-click="login()" class="btn btn-primary">Login</button>
     </form>
   </div>
 
+  <!-- controller create necessay data varible used inside scope -->
+  <div ng-controller="createUserController" class="container" ng-show="! (global.user)">
+    <a class="trigger" ng-click="show=!show">Register new user</a>
+    <div ng-show="show">
+      <h4>Create User</h4>
+      <!-- set action and method for regular form submt -->
+      <form action="/users" method="post" role="form"> 
+        <div ng-class="{'red':errors.email}" class="form-group">
+          <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span><input type="text" name="email" placeholder="Email" ng-model="inputs.email" class="form-control"> 
+          </div>
+          <span ng-show="errors.email">{{errors.email}}</span> 
+        </div>
+
+        <div ng-class="{'red':errors.password}" class="form-group"> 
+          <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span><input type="text" name="password" placeholder="Password" ng-model="inputs.password" class="form-control"> 
+          </div>
+          <span ng-show="errors.password">{{errors.password}}</span> 
+        </div>
+
+        <!-- <button type="submit">Sync Submit</button> -->
+        <button type="button" ng-click="createUser()" class="btn btn-primary">Register</button>
+      </form>
+      </div>  </div>
+
   <!-- another controller -->
-  <div ng-controller="getUsersController" class="container">
+  <div ng-controller="getUsersController" class="container" ng-show="global.user">
     <h4>Search User</h4>
     <div class="input-group">
       <input type="text" placeholder="Email" ng-model="query" class="form-control" />
@@ -87,7 +120,13 @@
 
   <script>
     var app = angular.module('app', []);
-app.controller('getUsersController', function ($scope, $http) {
+
+app.factory("service", function() {
+  return { global: { user: null } }
+});
+
+app.controller('getUsersController', function ($scope, $http, service) {
+  $scope.global = service.global;
 
   $scope.getUsers = function() {
     //$http.get('users).
@@ -140,13 +179,68 @@ app.controller('getUsersController', function ($scope, $http) {
   $scope.getUsers();
 });
 
-app.controller('createUserController', function ($scope, $http) {
+app.controller('loginController', function ($scope, $http, service) {
+  $scope.global = service.global;
+  $scope.form = {"inputs": {}, "errors": {}};
+
+  $scope.login = function() {
+    //$http.post('/static/login', $scope.form.inputs).
+    //use jsonp and special get to do local quick prototype
+    $http.jsonp('/static/login?callback=JSON_CALLBACK&'+decodeURIComponent($.param($scope.inputs))).
+      success(function(resp) {$scope.loginSuccess(resp);});
+
+    //use fake response to simulate
+    //resp = {"errors": {"email": "Invalid Email"}, "message": "Errors"};
+    //$scope.createUserSuccess(resp);
+  };
+  $scope.loginSuccess = function(resp) {
+    if (resp.errors) $scope.errors = resp.errors;
+    if (resp.message) $scope.message = resp.message;
+    if (resp.data) $scope.global.user = resp.data;
+    // invoke another controller
+    refresh();
+  };
+
+  $scope.error = function(resp) {
+    $scope.status = "error";
+  }
+});
+
+app.controller('logoutController', function ($scope, $http, service) {
+  $scope.global = service.global;
+
+  $scope.logout = function() {
+    //$http.post('/logout', $scope.form.inputs).
+    //use jsonp and special get to do local quick prototype
+    $http.jsonp('/logout?callback=JSON_CALLBACK').
+      success(function(resp) {$scope.logoutSuccess(resp);});
+
+    //use fake response to simulate
+    //resp = {"errors": {"email": "Invalid Email"}, "message": "Errors"};
+    //$scope.createUserSuccess(resp);
+  };
+  $scope.logoutSuccess = function(resp) {
+    if (resp.errors) $scope.errors = resp.errors;
+    if (resp.message) $scope.message = resp.message;
+    service.global.user = null;
+    // invoke another controller
+    refresh();
+  };
+
+  $scope.error = function(resp) {
+    $scope.status = "error";
+  }
+});
+
+app.controller('createUserController', function ($scope, $http, service) {
+  $scope.global = service.global;
+  $scope.show = false;
   $scope.form = {"inputs": {}, "errors": {}};
 
   $scope.createUser = function() {
     //$http.post('/users', $scope.form.inputs).
     //use jsonp and special get to do local quick prototype
-    $http.jsonp('/json/users/create?callback=JSON_CALLBACK&'+decodeURIComponent($.param($scope.inputs))).
+    $http.jsonp('/static/json/users/create?callback=JSON_CALLBACK&'+decodeURIComponent($.param($scope.inputs))).
       success(function(resp) {$scope.createUserSuccess(resp);});
 
     //use fake response to simulate

@@ -1,5 +1,5 @@
 # system & 3rd party package
-from flask import Flask, request
+from flask import Flask, request, session, redirect, url_for, escape, abort
 import json, urlparse, os.path, time, string, random
 
 from werkzeug import secure_filename
@@ -11,6 +11,9 @@ app = Flask(__name__)
 
 # set app to debug mode to enable jsonp for all operations
 app.debug = True
+# set the secret key.  keep this really secret:
+app.secret_key = 'B0Wrc3d/3yX R~XHD!jxN]kWX/,?wT'
+
 # This is the path to the upload directory
 app.config['UPLOAD_FOLDER'] = 'upload/'
 # These are the extension that we are accepting to be uploaded
@@ -24,9 +27,13 @@ JSONP_CALLBACK = "callback"
 
 # put static files under static folder, it can be accessed without through flask route
 
-@app.route('/')
-def hello_world():
-    return 'Hello World!!'
+@app.route('/static')
+def index():
+	return 'Hello World'
+
+@app.route('/whoami')
+def whoami():
+	return 'Logged in as %s' % escape(session['username'])
 
 # JPSONP cross domain is ONLY support with HTTP GET method
 @app.route('/json/users', methods=['GET'])
@@ -67,7 +74,7 @@ def queryUsers():
 	return (json.dumps({"data": users, "message":"Users Retrieved."}))
 
 # special jsonp for local prototype when app debug mode
-@app.route('/json/users/create', methods=['GET'])
+@app.route('/static/json/users/create', methods=['GET'])
 # HTTP PUT, POST method use msg body to pass data either in form or json format
 # Check request header Content-Type to find which data format
 @app.route('/json/users', methods=['PUT', 'POST'])
@@ -128,6 +135,40 @@ def upload():
 				# ]}
 				result.append({"name": filename})
 	return (json.dumps({"files": result, "message":"Files Uploaded."}))
+
+@app.route('/static/login', methods=['GET', 'POST'])
+def login():
+	# get json data
+	u = request.get_json()
+	# if not json, get form data and convert it to json
+	if not u:
+		u = request.form.to_dict()
+	# if not form, get query string and convert it to json
+	if (app.debug and (not u)):
+		params = urlparse.parse_qs(request.query_string)
+		for param in params:
+			u[param] = params[param][0] 
+	print u
+
+	# check username password
+	session['username'] = u['username']
+	return (json.dumps({"message":"Login Success.", "data":{"name":"fei"}}))
+
+@app.route('/logout')
+def logout():
+    # remove the username from the session if it's there
+    session.pop('username', None)
+    return (json.dumps({"message":"Logout Success."}))
+
+@app.before_request
+def preProcess():
+	if 'static' in request.url:
+		return
+	else:
+		if 'username' in session:
+			return
+		else:
+			abort(401)
 
 @app.after_request
 def postProcess(resp):
