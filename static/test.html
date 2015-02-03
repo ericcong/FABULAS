@@ -5,10 +5,12 @@
 <head>
 
   <meta charset="UTF-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Fabulas">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
 
-  <title>CodePen - All in One</title>
-
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>fabuslas</title>
 
   <style>@import url('//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css');
 @import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css");
@@ -114,7 +116,7 @@ body {
   display: block;
   font-family: FontAwesome;
   padding: 0.75em 0.75em;
-  font-size: 1.2em;
+  font-size: 1.4em;
 }
 
 .list-group-item {
@@ -128,9 +130,10 @@ body {
 
   <div class="slideout" ng-app="app" id="app"><input type="checkbox" /><div class="menu">
     <ul onclick="$('.slideout > input[type=checkbox]').click()">
-      <li onclick="$('.multiview > input[type=radio]')[0].click()">Login/Logout</li>
+      <li onclick="$('.multiview > input[type=radio]')[0].click()">Login</li>
       <li onclick="$('.multiview > input[type=radio]')[1].click()">Manage Users</li>
       <li onclick="$('.multiview > input[type=radio]')[2].click()">Registration</li>
+      <li ng-controller="logoutController" class="container" ng-show="global.user" ng-click="logout()">Logout</li>
     </ul>
   </div>
 
@@ -148,7 +151,7 @@ body {
         <div ng-controller="loginController" class="container" ng-show="! (global.user)">
           <h4>Login</h4>
           <!-- set action and method for regular form submt -->
-          <form action="/login" method="post" role="form"> 
+          <form action="" ng-submit="login()" role="form"> 
             <div ng-class="{'red':errors.email}" class="form-group">
               <div class="input-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span><input type="text" name="username" placeholder="Email" ng-model="inputs.username" class="form-control"> 
@@ -164,7 +167,7 @@ body {
             </div>
 
             <!-- <button type="submit">Sync Submit</button> -->
-            <button type="button" ng-click="login()" class="btn btn-primary">Login</button>
+            <input type="submit" class="btn btn-primary" value="Login"></input>
             <a onclick="$('.multiview > input[type=radio]')[2].click()">Register new user</a>
           </form>
         </div>
@@ -279,7 +282,7 @@ app.controller('getUsersController', function ($scope, $http, service) {
   }
 
   //initial users load
-  $scope.getUsers();
+  //$scope.getUsers();
 });
 
 app.controller('loginController', function ($scope, $http, service) {
@@ -327,8 +330,7 @@ app.controller('logoutController', function ($scope, $http, service) {
     if (resp.errors) $scope.errors = resp.errors;
     if (resp.message) $scope.message = resp.message;
     service.global.user = null;
-    // invoke another controller
-    refresh();
+    $('.multiview > input[type=radio]')[0].click();
   };
 
   $scope.error = function(resp) {
