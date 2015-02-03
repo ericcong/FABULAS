@@ -154,7 +154,7 @@ body {
           <form action="" ng-submit="login()" role="form"> 
             <div ng-class="{'red':errors.email}" class="form-group">
               <div class="input-group">
-                <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span><input type="text" name="username" placeholder="Email" ng-model="inputs.username" class="form-control"> 
+                <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span><input type="text" name="username" placeholder="Email" ng-model="inputs.username" class="form-control" autofocus /> 
               </div>
               <span ng-show="errors.email">{{errors.email}}</span> 
             </div>
@@ -167,7 +167,7 @@ body {
             </div>
 
             <!-- <button type="submit">Sync Submit</button> -->
-            <input type="submit" class="btn btn-primary" value="Login"></input>
+            <input type="submit" class="btn btn-primary" value="Login" />
             <a onclick="$('.multiview > input[type=radio]')[2].click()">Register new user</a>
           </form>
         </div>
@@ -176,12 +176,14 @@ body {
       <input type="radio" name="view" />
       <div ng-controller="getUsersController" class="container" ng-show="global.user">
         <h4>Search User</h4>
-        <div class="input-group">
-          <input type="text" placeholder="Email" ng-model="query" class="form-control" />
-          <span class="input-group-btn">
-            <button ng-click="queryUsers()" class="btn btn-default">Search</button>
-          </span>
-        </div>
+        <form action="" ng-submit="queryUsers()" role="form"> 
+          <div class="input-group">
+            <input type="text" placeholder="Email" ng-model="query" class="form-control" />
+            <span class="input-group-btn">
+              <input type="submit" class="btn btn-default" value="Search" />
+            </span>
+          </div>
+        </form>
         <h5 class="form-group">The following are users retrieved from server:</h5>
         <input ng-model="keyword" placeholder="Keyword" class="form-control form-group">    
         <ul class="list-group">
@@ -200,7 +202,7 @@ body {
         <form action="/users" method="post" role="form"> 
           <div ng-class="{'red':errors.email}" class="form-group">
             <div class="input-group">
-              <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span><input type="text" name="email" placeholder="Email" ng-model="inputs.email" class="form-control"> 
+              <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span><input type="text" name="email" placeholder="Email" ng-model="inputs.email" class="form-control" /> 
             </div>
             <span ng-show="errors.email">{{errors.email}}</span> 
           </div>
