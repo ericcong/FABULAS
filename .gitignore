@@ -2,3 +2,5 @@ venv/
 *.pyc
 data.db
 upload/
+.env
+users.sqlite
