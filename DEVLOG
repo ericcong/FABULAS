@@ -1,0 +1,4 @@
+2015-02-04:
+  Found `python-future` for writing 2 and 3 compatible python codes.
+  Tried a small app based on `flask-user`, will look into `flask-security` for differences. 
+  Tried JSON based service access based on `Flask-JWT`
