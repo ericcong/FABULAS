@@ -3,22 +3,57 @@
 <html>
 <head>
   <meta charset="UTF-8">
-
-  <title>Angular View</title>
-
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Fabulas">
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
-
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
   <style>
     @import url('https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.2/normalize.css');
     @import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css');
     @import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css");
     @import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css");
+  </style>
+
+  <title>Angular View</title>
+
+  <style type="text/css">
+    /* app style go here, will be factored out */
+    .menu li {
+      display: inline-block;
+      padding: 1em;
+    }
+
+    .views {
+      position:relative;
+      /* need a better way */
+      height:600px;
+      overflow:hidden;
+    }
+    .view {
+      display: block;
+      width:100%;
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      bottom:0;
+      padding:0;
+    }
+
+    .view.ng-enter, .view.ng-leave {
+      -webkit-transition: all 1s;
+      transition: all 1s;
+    }
+    .view.ng-enter {
+      left:100%;
+    }
+    .view.ng-enter.ng-enter-active {
+      left:0;
+    }
+    .view.ng-leave.ng-leave-active {
+      left:-100%;
+    }
   </style>
 
 </head>
@@ -32,13 +67,10 @@
       <li><a href="#/view2/2">view2</a></li>
     </ul>
 
-    <pre>global data from service: {{ global }}</pre>
-    <pre>$location.path() = {{ $location.path() }}</pre>
-    <pre>$route.current.templateUrl = {{ $route.current.templateUrl }}</pre>
-    <pre>$route.current.params = {{ $route.current.params }}</pre>
-
-    <div ng-view>
+    <div class="views">
+      <div ng-view class="view">
       <!-- sub views will be loaded in here -->
+      </div>
     </div>
 
   </div>
@@ -46,10 +78,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.11/angular.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.11/angular-route.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.11/angular-animate.js"></script>
 
   <script>
     //application
-    var app = angular.module('app', ['ngRoute']);
+    var app = angular.module('app', ['ngRoute', 'ngAnimate']);
     // config route
     app.config(['$routeProvider',
       function($routeProvider) {
@@ -69,7 +102,7 @@
     //service shared among controllers
     app.factory("service", function() {
       return { 
-        // all global data
+        // put all global data here
         global: { user: 'test' } 
       }
     });
@@ -79,10 +112,12 @@
       $scope.global = service.global;
 
       // angular object use $name
-      // sub controller inherit data in global controller scope
+      // sub controller inherit route info from global scope
       $scope.$route = $route;
       $scope.$location = $location;
     }]);
+
+    // factor out if app grows
     // sub view controller, can be in  separate module
     app.controller('viewCtrl1', ['$scope', 'service', function($scope, service) {
     }]);
