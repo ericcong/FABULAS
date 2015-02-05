@@ -180,6 +180,12 @@ def postProcess(resp):
 	if (JSONP and request.args.get(JSONP_CALLBACK, '')):
 		resp.set_data(request.args.get(JSONP_CALLBACK, '')+'('+ resp.get_data() +')')
 		resp.mimetype = "application/javascript"
+
+	if (app.debug):
+		resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+		resp.headers["Pragma"] = "no-cache"
+		resp.headers["Expires"] = "0"
+	
 	return resp
 
 # generate random id

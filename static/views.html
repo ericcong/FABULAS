@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+
+  <title>Angular View</title>
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Fabulas">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <style>
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.2/normalize.css');
+    @import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css');
+    @import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css");
+    @import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css");
+  </style>
+
+</head>
+
+<body>
+
+  <div ng-app="app" ng-controller="globalCtrl as globalCtrl">
+
+    <ul class="menu">
+      <li><a href="#/view1">view1</a></li>
+      <li><a href="#/view2/2">view2</a></li>
+    </ul>
+
+    <pre>global data from service: {{ global }}</pre>
+    <pre>$location.path() = {{ $location.path() }}</pre>
+    <pre>$route.current.templateUrl = {{ $route.current.templateUrl }}</pre>
+    <pre>$route.current.params = {{ $route.current.params }}</pre>
+
+    <div ng-view>
+      <!-- sub views will be loaded in here -->
+    </div>
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.11/angular.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.11/angular-route.js"></script>
+
+  <script>
+    //application
+    var app = angular.module('app', ['ngRoute']);
+    // config route
+    app.config(['$routeProvider',
+      function($routeProvider) {
+        $routeProvider.
+          when('/view1', {
+            templateUrl: 'view1.html',
+            controller: 'viewCtrl1'
+          }).
+          when('/view2/:id', {
+            templateUrl: 'view2.html',
+            controller: 'viewCtrl2'
+          }).
+          otherwise({
+            redirectTo: '/view1'
+          });
+      }]);
+    //service shared among controllers
+    app.factory("service", function() {
+      return { 
+        // all global data
+        global: { user: 'test' } 
+      }
+    });
+    //global controller
+    app.controller('globalCtrl', ['$scope', 'service', '$route', '$location', function($scope, service, $route, $location) {
+      // map global data into global scope
+      $scope.global = service.global;
+
+      // angular object use $name
+      // sub controller inherit data in global controller scope
+      $scope.$route = $route;
+      $scope.$location = $location;
+    }]);
+    // sub view controller, can be in  separate module
+    app.controller('viewCtrl1', ['$scope', 'service', function($scope, service) {
+    }]);
+    // sub view controller, can be in separate module
+    app.controller('viewCtrl2', ['$scope', 'service', function($scope, service) {
+    }]);
+  </script>
+
+</body>
+
+</html>
