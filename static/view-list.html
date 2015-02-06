@@ -1,8 +1,8 @@
-<div ng-controller="ViewListCtrl" class="container">
+<div ng-controller="ListViewCtrl" class="container">
   <h4>Search User</h4>
-  <form action="" ng-submit="queryUsers()" role="form"> 
+  <form ng-submit="queryUsers()"> 
     <div class="input-group">
-      <input type="text" placeholder="Email" ng-model="form.inputs.email" class="form-control" />
+      <input type="text" placeholder="Email" ng-model="inputs.email" class="form-control" />
       <span class="input-group-btn">
         <input type="submit" class="btn btn-default" value="Search" />
       </span>

@@ -36,19 +36,19 @@ def whoami():
 	return 'Logged in as %s' % escape(session['username'])
 
 # JPSONP cross domain is ONLY support with HTTP GET method
-@app.route('/json/users', methods=['GET'])
+@app.route('/json/users', methods=['GET', 'POST'])
 def getUsers():
 	users = service.getUsers()
 	return (json.dumps({"data": users, "message":"users retrieved"}))
 
 # map url parts to variables
-@app.route('/json/users/<id>', methods=['GET'])
+@app.route('/json/users/<id>', methods=['GET', 'POST'])
 def getUser(id):
 	user = service.getUser(id)
 	return (json.dumps({"data": user, "message":"user retrieved"}))
 
 # special jsonp url for local test when app debug mode
-@app.route('/json/users/delete/<int:id>', methods=['GET'])
+@app.route('/json/users/delete/<int:id>', methods=['GET', 'POST'])
 # map url parts to variables
 @app.route('/json/users/<int:id>', methods=['DELETE'])
 def deleteUser(id):
@@ -57,7 +57,7 @@ def deleteUser(id):
 		return (json.dumps({"message":"user deleted"}))
 
 # HTTP GET method should NOT use msg body to communicate with server
-@app.route('/json/users/query', methods=['GET'])
+@app.route('/json/users/query', methods=['GET, POST'])
 def queryUsers():
 	# get whole query string or individual query param
 	#print request.query_string
@@ -74,10 +74,9 @@ def queryUsers():
 	return (json.dumps({"data": users, "message":"Users Retrieved."}))
 
 # special jsonp for local prototype when app debug mode
-@app.route('/static/json/users/create', methods=['GET'])
+@app.route('/static/json/users/create', methods=['GET', 'POST'])
 # HTTP PUT, POST method use msg body to pass data either in form or json format
 # Check request header Content-Type to find which data format
-@app.route('/json/users', methods=['PUT', 'POST'])
 def createUser():
 	# request header Content-Type: application/json with body {"email":"jane@me.com", "password":"jane"} 
 	# request header Content-Type: multipart/form-data with binary body to support file upload
@@ -154,7 +153,7 @@ def login():
 	session['username'] = u['username']
 	return (json.dumps({"message":"Login Success.", "data":{"name":"fei"}}))
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET', 'POST'])
 def logout():
     # remove the username from the session if it's there
     session.pop('username', None)
@@ -181,10 +180,10 @@ def postProcess(resp):
 		resp.set_data(request.args.get(JSONP_CALLBACK, '')+'('+ resp.get_data() +')')
 		resp.mimetype = "application/javascript"
 
-	if (app.debug):
-		resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-		resp.headers["Pragma"] = "no-cache"
-		resp.headers["Expires"] = "0"
+	# if (app.debug):
+	# 	resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+	# 	resp.headers["Pragma"] = "no-cache"
+	# 	resp.headers["Expires"] = "0"
 	
 	return resp
 

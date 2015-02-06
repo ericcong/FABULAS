@@ -1,15 +1,11 @@
-angular.module('ViewList', ['ngRoute', 'ServiceModule'])
+angular.module('ListView', ['ngRoute', 'ServiceModule'])
 
-.config(['$routeProvider', function($routeProvider) {	
-	$routeProvider.when('/list', {
-	templateUrl: 'view-list.html',
-	controller: 'ViewListCtrl'
-	});
-}])
+.controller('ListViewCtrl', ['$scope', '$http', 'service', function ($scope, $http, service) {
+  	$scope.inputs = {};
+  	$scope.errors = {};
 
-.controller('ViewListCtrl', ['$scope', '$http', 'service', function ($scope, $http, service) {
-  	$scope.form = {"inputs": {}, "errors": {}};
 	$scope.getUsers = function() {
+		// alert("GetUsers: ");
 		service.getUsers().then(function (resp) {
 		    if (resp.data.errors) $scope.errors = resp.data.errors;
 		    if (resp.data.message) $scope.message = resp.data.message;
@@ -18,8 +14,9 @@ angular.module('ViewList', ['ngRoute', 'ServiceModule'])
 		// $scope.users = [{"email":"fei@me.com", "id":"0"}, {"email":"mike@me.com", "id":"1"}];
 	};
 	$scope.queryUsers = function() {
-		if ($scope.form.inputs.email) {
-	  		service.queryUsers($scope.form.inputs).then(function (resp) {
+		// alert("QueryUsers: "+$scope.inputs.email);
+		if ($scope.inputs.email) {
+	  		service.queryUsers($scope.inputs).then(function (resp) {
 			    if (resp.data.errors) $scope.errors = resp.data.errors;
 			    if (resp.data.message) $scope.message = resp.data.message;
 			    if (resp.data.data) $scope.users = resp.data.data;
@@ -32,11 +29,16 @@ angular.module('ViewList', ['ngRoute', 'ServiceModule'])
   		service.deleteUser(id).then(function (resp) {
 		    if (resp.data.errors) $scope.errors = resp.data.errors;
 		    if (resp.data.message) $scope.message = resp.data.message;
+		    var newUsers = [];
 		    for	(index = 0; index < $scope.users.length; index++) {
-		    	if ($scope.users[index].id == id) {
-		    		$scope.users.splice(index, index+1);
+		    	if ($scope.users[index].id != id) {
+		    		newUsers.push($scope.users[index]);
 		    	}
 		    }
+		    $scope.users = newUsers;
   		});
 	};
+
+	$scope.getUsers();
+	// alert("ListViewCtrl");
 }]);
