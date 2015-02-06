@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)http://localhost:5000/static/views.html#/request -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}</style>
+  <meta charset="UTF-8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Fabulas">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <style>
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.2/normalize.css');
+    @import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css');
+    @import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css");
+    @import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css");
+  </style>
+
+  <title>Angular View</title>
+
+  <style type="text/css">
+    /* app style go here, will be factored out */
+    .menu li {
+      display: inline-block;
+      padding: 1em;
+    }
+
+    .views {
+      position:relative;
+      /* need a better way */
+      height:600px;
+      overflow:hidden;
+    }
+    .view {
+      display: block;
+      width:100%;
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      bottom:0;
+      padding:0;
+    }
+
+    .view.ng-enter, .view.ng-leave {
+      -webkit-transition: all 0.3s;
+      transition: all 0.3s;
+    }
+    .view.ng-enter {
+      left:100%;
+    }
+    .view.ng-enter.ng-enter-active {
+      left:0;
+    }
+    .view.ng-leave.ng-leave-active {
+      left:-100%;
+    }
+  </style>
+
+<style type="text/css"></style></head>
+
+<body>
+
+  <div ng-app="app" ng-controller="globalCtrl as globalCtrl" class="ng-scope">
+
+    <ul class="menu">
+      <li><a href="http://localhost:5000/static/login?username=fei">Login</a></li>
+      <li><a href="http://localhost:5000/static/views.html#/view1">view1</a></li>
+      <li><a href="http://localhost:5000/static/views.html#/view2/2">view2</a></li>
+      <li><a href="http://localhost:5000/static/views.html#/list">List Users</a></li>
+      <li><a href="./Angular View_files/Angular View.html">Create Users</a></li>
+    </ul>
+
+    <div class="views">
+      <!-- ngView:  --><div ng-view="" class="view ng-scope">  <div ng-controller="RequestViewCtrl" class="container ng-scope"><h4>Create User</h4>
+    <!-- set action and method for regular form submt -->
+    <form ng-submit="createRequest()" method="post" role="form" class="ng-valid ng-dirty ng-valid-parse ng-submitted"> 
+      <div ng-class="{&#39;error&#39;:errors.email}" class="form-group error">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span><input type="text" placeholder="Email" ng-model="inputs.email" class="form-control ng-valid ng-dirty ng-valid-parse ng-touched"> 
+        </div>
+        <span ng-show="errors.email" class="ng-binding">Bad format</span> 
+      </div>
+
+      <div ng-class="{&#39;error&#39;:errors.password}" class="form-group"> 
+        <div class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span><input type="text" placeholder="Password" ng-model="inputs.password" class="form-control ng-valid ng-dirty ng-valid-parse ng-touched"> 
+        </div>
+        <span ng-show="errors.password" class="ng-binding ng-hide"></span> 
+      </div>
+
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+  </div>
+</div>
+    </div>
+
+  </div>
+
+  <script src="./Angular View_files/jquery.js"></script>
+  <script src="./Angular View_files/angular.js"></script>
+  <script src="./Angular View_files/angular-route.js"></script>
+  <script src="./Angular View_files/angular-animate.js"></script>
+
+  <!-- load service js -->
+  <script src="./Angular View_files/service.js"></script>
+
+  <!-- load view js -->
+  <script src="./Angular View_files/view-list.js"></script>
+  <script src="./Angular View_files/view-request.js"></script>
+
+  <script>
+    //application
+    var app = angular.module('app', ['ngRoute', 'ngAnimate', 'ServiceModule', 'ListView', 'RequestView']);
+    // config route
+    // be VERY carefull with URL pattern
+    app.config(['$routeProvider',
+      function($routeProvider) {
+        $routeProvider.
+          when('/view1', {
+            templateUrl: '/static/view1.html'
+          }).
+          when('/view2/:id', {
+            templateUrl: '/static/view2.html'
+          }).
+          when('/list', {
+            templateUrl: '/static/view-list.html'
+          }).
+          when('/request', {
+            templateUrl: '/static/view-request.html'
+          }).
+          otherwise({
+            redirectTo: '/view1'
+          });
+      }]);
+    //global controller
+    app.controller('globalCtrl', ['$scope', 'service', '$route', '$location', function($scope, service, $route, $location) {
+      // map global data into global scope
+      $scope.global = service.global;
+
+      // angular object use $name
+      // sub controller inherit route info from global scope
+      $scope.$route = $route;
+      $scope.$location = $location;
+    }]);
+
+    // factor out if app grows
+    // sub view controller, can be in  separate module
+    app.controller('viewCtrl1', ['$scope', 'service', '$route', '$location', function($scope, service,$route, $location) {
+    }]);
+    // sub view controller, can be in separate module
+    app.controller('viewCtrl2', ['$scope', 'service', function($scope, service) {
+    }]);
+  </script>
+
+
+
+</body></html>

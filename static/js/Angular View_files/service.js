@@ -28,7 +28,7 @@ serviceModule.factory("service", ['$http', function($http) {
     },
     createUser: function(inputs) {
       // alert("Service createUser");
-      return $http.post('/static/json/users/create', inputs);
+      $http.post('/static/json/users/create', inputs);
       // return $http.jsonp('/static/json/users/create?callback=JSON_CALLBACK&'+
       //   decodeURIComponent($.param(inputs)));
     },
