@@ -1,0 +1,19 @@
+<div ng-controller="ViewListCtrl" class="container">
+  <h4>Search User</h4>
+  <form action="" ng-submit="queryUsers()" role="form"> 
+    <div class="input-group">
+      <input type="text" placeholder="Email" ng-model="form.inputs.email" class="form-control" />
+      <span class="input-group-btn">
+        <input type="submit" class="btn btn-default" value="Search" />
+      </span>
+    </div>
+  </form>
+  <h5 class="form-group">The following are users retrieved from server:</h5>
+  <input ng-model="keyword" placeholder="Keyword" class="form-control form-group">    
+  <ul class="list-group">
+    <li ng-repeat="user in users | filter:keyword" class="list-group-item">
+      <span ng-click="deleteUser(user.id)" class="badge">x</span>
+      <span>{{user.id}}</span> - <span>{{user.email}}</span>
+    </li>
+  </ul>
+</div>

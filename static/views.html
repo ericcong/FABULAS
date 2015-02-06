@@ -65,6 +65,7 @@
     <ul class="menu">
       <li><a href="#/view1">view1</a></li>
       <li><a href="#/view2/2">view2</a></li>
+      <li><a href="#/list">List Users</a></li>
     </ul>
 
     <div class="views">
@@ -82,7 +83,7 @@
 
   <script>
     //application
-    var app = angular.module('app', ['ngRoute', 'ngAnimate']);
+    var app = angular.module('app', ['ngRoute', 'ngAnimate', 'ServiceModule', 'ViewList']);
     // config route
     app.config(['$routeProvider',
       function($routeProvider) {
@@ -99,13 +100,6 @@
             redirectTo: '/view1'
           });
       }]);
-    //service shared among controllers
-    app.factory("service", function() {
-      return { 
-        // put all global data here
-        global: { user: 'test' } 
-      }
-    });
     //global controller
     app.controller('globalCtrl', ['$scope', 'service', '$route', '$location', function($scope, service, $route, $location) {
       // map global data into global scope
@@ -119,13 +113,18 @@
 
     // factor out if app grows
     // sub view controller, can be in  separate module
-    app.controller('viewCtrl1', ['$scope', 'service', function($scope, service) {
+    app.controller('viewCtrl1', ['$scope', 'service', '$route', '$location', function($scope, service,$route, $location) {
     }]);
     // sub view controller, can be in separate module
     app.controller('viewCtrl2', ['$scope', 'service', function($scope, service) {
     }]);
   </script>
 
+  <!-- load app js -->
+  <!-- load view js -->
+  <script src="view-list.js"></script>
+  <!-- load service js -->
+  <script src="service.js"></script>
 </body>
 
 </html>
