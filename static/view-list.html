@@ -11,9 +11,9 @@
   <h5 class="form-group">The following are users retrieved from server:</h5>
   <input ng-model="keyword" placeholder="Keyword" class="form-control form-group">    
   <ul class="list-group">
-    <li ng-repeat="user in users | filter:keyword" class="list-group-item">
+    <li ng-repeat="user in users track by user.id | filter:keyword" class="list-group-item">
       <span ng-click="deleteUser(user.id)" class="badge">x</span>
-      <span>{{user.id}}</span> - <span>{{user.email}}</span>
+      <span>{{::user.id}}</span> - <span>{{::user.email}}</span>
     </li>
   </ul>
 </div>

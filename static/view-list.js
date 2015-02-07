@@ -29,13 +29,18 @@ angular.module('ListView', ['ngRoute', 'ServiceModule'])
   		service.deleteUser(id).then(function (resp) {
 		    if (resp.data.errors) $scope.errors = resp.data.errors;
 		    if (resp.data.message) $scope.message = resp.data.message;
-		    var newUsers = [];
+		    // var newUsers = [];
+		    // for	(index = 0; index < $scope.users.length; index++) {
+		    // 	if ($scope.users[index].id != id) {
+		    // 		newUsers.push($scope.users[index]);
+		    // 	}
+		    // }
+		    // $scope.users = newUsers;
 		    for	(index = 0; index < $scope.users.length; index++) {
-		    	if ($scope.users[index].id != id) {
-		    		newUsers.push($scope.users[index]);
+		    	if ($scope.users[index].id == id) {
+		    		$scope.users.splice(index, 1);
 		    	}
 		    }
-		    $scope.users = newUsers;
   		});
 	};
 

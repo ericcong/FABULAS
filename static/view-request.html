@@ -3,14 +3,14 @@
     <form ng-submit="createRequest()" method="post" role="form"> 
       <div ng-class="{'error':errors.email}" class="form-group">
         <div class="input-group">
-          <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span><input type="text" placeholder="Email" ng-model="inputs.email" class="form-control" /> 
+          <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span><input type="text" placeholder="Email" ng-model="inputs.email" ng-model-options="{ updateOn: 'submit'}" class="form-control" /> 
         </div>
         <span ng-show="errors.email">{{errors.email}}</span> 
       </div>
 
       <div ng-class="{'error':errors.password}" class="form-group"> 
         <div class="input-group">
-          <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span><input type="text" placeholder="Password" ng-model="inputs.password" class="form-control"> 
+          <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span><input type="text" placeholder="Password" ng-model="inputs.password" ng-model-options="{ updateOn: 'submit'}" class="form-control"> 
         </div>
         <span ng-show="errors.password">{{errors.password}}</span> 
       </div>
