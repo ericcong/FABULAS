@@ -2,7 +2,7 @@ angular.module('RequestView', ['ngRoute', 'ServiceModule'])
 .controller('RequestViewCtrl', ['$scope', '$route', '$location', '$http', 'service', function ($scope, $route, $location, $http, service) {
   // setup form binding
   $scope.inputs = {};
-  $scope.errors = {"email":"Bad format"};
+  // $scope.errors = {"email":"Bad format"};
   
   // event handler
   $scope.createRequest = function() {

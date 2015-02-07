@@ -6,7 +6,7 @@ serviceModule.factory("service", ['$http', function($http) {
   return { 
     // put all global data here
     global: { 
-      user: 'test' 
+      user: 'test'
     },
     login: function(inputs) {
       return $http.post('/static/login', inputs);
