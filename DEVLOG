@@ -1,4 +1,10 @@
 2015-02-04:
-  Found `python-future` for writing 2 and 3 compatible python codes.
-  Tried a small app based on `flask-user`, will look into `flask-security` for differences. 
-  Tried JSON based service access based on `Flask-JWT`
+    Found `python-future` for writing 2 and 3 compatible python codes.
+    Tried a small app based on `flask-user`, will look into `flask-security` for differences. 
+    Tried JSON based service access based on `Flask-JWT`
+
+2015-02-18:
+    Studied and chose flask-principal as the main auth framework
+
+2015-02-25:
+    Made a template and inline document of authentication and authorization
