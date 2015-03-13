@@ -274,9 +274,12 @@ function createMeeting(m) {
 
   if (m.campusAbbrev != null) {
     content += "<span>"+m.campusAbbrev+"</span>";
-    //fix d/c
-    labels["CC-"+m.campusAbbrev.replace("/", "N")] = m.campusAbbrev;
-    allCampuses["CC-"+m.campusAbbrev.replace("/", "N")] = m.campusAbbrev;
+    //TODO fix d/c, **, other invalid character etc
+    var cc = m.campusAbbrev.replace("/", "N").replace("**", "");
+    if (cc.length > 0) {
+      labels["CC-"+cc] = cc;
+      allCampuses["CC-"+cc] = cc;
+    }
   } else {
     content += "<span></span>";
   }
