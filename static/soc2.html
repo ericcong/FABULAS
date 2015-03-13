@@ -25,8 +25,12 @@
   margin: 1em 0 0.25em 0;
 }
 .filters td {
-  padding: 0 0.5em;
+  padding: 0 0.3em;
 }
+.filters label {
+  margin-right: 0.5em;
+}
+
 .result {
   display: inline-block;
   vertical-align: top;
@@ -119,12 +123,12 @@
 <div class="filters">
   <a href="https://github.com/tevjef/Rutgers-Course-Tracker/blob/master/response-samples/courses-nk-nb.json">sample data</a>
   <h4>Status Filter</h4>
-  <input type="checkbox" data-filter=".section.OS-true" checked />Open
-  <input type="checkbox" data-filter=".section.OS-false" checked />Close
+  <label><input type="checkbox" data-filter=".section.OS-true" checked />Open</label>
+  <label><input type="checkbox" data-filter=".section.OS-false" checked />Close</label>
   <h4>Day/Time Filter</h4>
   <table>
     <tr>
-      <td></td><td>M</td><td>T</td><td>W</td><td>Th</td><td>F</td>
+      <td></td><td>M</td><td>T</td><td>W</td><td>Th</td><td>F</td><td>SA</td><td>SU</td>
     </tr>
     <tr>
       <td>Morning</td>
@@ -133,6 +137,8 @@
       <td><input type="checkbox" data-filter=".section.MT-WA" checked /></td>
       <td><input type="checkbox" data-filter=".section.MT-THA" checked /></td>
       <td><input type="checkbox" data-filter=".section.MT-FA" checked /></td>
+      <td><input type="checkbox" data-filter=".section.MT-SAA" checked /></td>
+      <td><input type="checkbox" data-filter=".section.MT-SUA" checked /></td>
     </tr>
     <tr>
       <td>Afteroon</td>
@@ -141,6 +147,8 @@
       <td><input type="checkbox" data-filter=".section.MT-WP" checked /></td>
       <td><input type="checkbox" data-filter=".section.MT-THP" checked /></td>
       <td><input type="checkbox" data-filter=".section.MT-FP" checked /></td>
+      <td><input type="checkbox" data-filter=".section.MT-SAP" checked /></td>
+      <td><input type="checkbox" data-filter=".section.MT-SUP" checked /></td>
     </tr>
   </table>
 </div>
