@@ -244,7 +244,7 @@ function createCourse(c) {
 }
 
 function createSection(s) {
-  var labels = {};
+  var labels = [];
   var content = ""
   var meetings = "";
   for(var i=0; i<s.meetingTimes.length; i++) {
@@ -263,7 +263,7 @@ function createSection(s) {
 }
 
 function createMeeting(m) {
-  var labels = {};
+  var labels = [];
   var content = "";
   if (m.meetingDay == null) {
     content = "<span>Hours by Arrangement</span>";
