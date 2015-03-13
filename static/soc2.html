@@ -1,0 +1,326 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>CodePen - SOC Data jQuery</title>
+
+  <style>* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.filters {
+  display: inline-block;
+  width: 300px;
+  vertical-align: top;
+  margin-right: -4px;
+  padding: 1em;
+}
+.filters > div {
+  margin: 1em 0;
+}
+.filters td {
+  padding: 0 0.5em;
+}
+.result {
+  display: inline-block;
+  vertical-align: top;
+  width: calc(100% - 300px);
+  padding: 1em;
+}
+.result > h4 {
+  padding: 1em;
+  background-color: lightgrey;
+  width: 300px;
+  border-radius: 10px 10px 0 0;
+  border: 1px solid grey;
+  border-width: 0px 0px 0 0px;
+}
+
+.course {
+  width: 100%;
+  height: 2em;
+  overflow: hidden;
+  border: 1px solid grey;
+  border-width: 1px 1px 0px 1px;
+}
+
+.course.expanded {
+  height: auto;  
+}
+
+.course > .title {
+  background-color: lightgrey;
+  padding: 0.5em;
+}
+
+.course > .header {
+  padding: 0.5em;
+}
+.course > .title > span:nth-of-type(1):after {
+  content: ":";
+}
+.course > .title > span:nth-of-type(2):after {
+  content: ":";
+}
+.course > .title > span:nth-of-type(3) {
+  display: inline-block;
+  margin-right: 2em;
+}
+
+.course > .section {
+  padding: 0.5em;
+  border-bottom: 1px solid lightgrey;
+}
+.course > .section > span:nth-of-type(1).status-false + span {
+  background-color: red;
+}
+.course > .section > span:nth-of-type(1).status-true + span {
+  background-color: green;
+}
+
+.course > .section > span:nth-of-type(2) {
+  display: inline-block;
+  padding: 0.4em 0 0.2em 0;
+  width: 2em;
+  margin-right: 1em;
+  text-align: center;
+  color: white;
+}
+
+.course > .section > ul {
+  display: inline-block;
+  list-style-type: none;
+  margin-left: 1em;
+  vertical-align: middle;
+}
+
+.course > .section > ul > li > span:nth-of-type(1) {
+  display: inline-block;
+  margin-right: 1em;
+  width: 12em;
+}
+.course > .section > ul > li > span:nth-of-type(2) {
+  display: inline-block;
+  width: 3em;
+  margin-right: 1em;
+}
+
+</style>
+
+</head>
+
+<body>
+  <div class="filters">
+    <h4>Course Filter</h4><div>
+    <input type="checkbox" data-filter=".course.u01" checked />SAS-01
+    <input type="checkbox" data-filter=".course.u21" checked />SAS-21
+  </div>
+  <div>
+    <input type="checkbox" data-filter=".course.s198" checked />CS-198
+    <input type="checkbox" data-filter=".course.s350" checked />ENG-350
+    <input type="checkbox" data-filter=".course.s640" checked />MATH-640
+  </div>
+  <div>
+    <input type="checkbox" data-filter=".course.l100" checked />100
+    <input type="checkbox" data-filter=".course.l200" checked />200
+    <input type="checkbox" data-filter=".course.l300" checked />300
+    <input type="checkbox" data-filter=".course.l400" checked />400
+    <input type="checkbox" data-filter=".course.l500" checked />500
+    <input type="checkbox" data-filter=".course.l600" checked />600
+    <input type="checkbox" data-filter=".course.l700" checked />700
+    <input type="checkbox" data-filter=".course.l800" checked />800
+  </div>
+  <h4>Section Filter</h4>
+  <div>
+    <input type="checkbox" data-filter=".section.status-true" checked />Open
+    <input type="checkbox" data-filter=".section.status-false" checked />Close
+  </div>
+  <table>
+    <tr>
+      <td></td><td>M</td><td>T</td><td>W</td><td>Th</td><td>F</td>
+    </tr>
+    <tr>
+      <td>Morning</td>
+      <td><input type="checkbox" data-filter=".section.MA" checked /></td>
+      <td><input type="checkbox" data-filter=".section.TA" checked /></td>
+      <td><input type="checkbox" data-filter=".section.WA" checked /></td>
+      <td><input type="checkbox" data-filter=".section.THA" checked /></td>
+      <td><input type="checkbox" data-filter=".section.FA" checked /></td>
+    </tr>
+    <tr>
+      <td>Afteroon</td>
+      <td><input type="checkbox" data-filter=".section.MP" checked /></td>
+      <td><input type="checkbox" data-filter=".section.TP" checked /></td>
+      <td><input type="checkbox" data-filter=".section.WP" checked /></td>
+      <td><input type="checkbox" data-filter=".section.THP" checked /></td>
+      <td><input type="checkbox" data-filter=".section.FP" checked /></td>
+    </tr>
+  </table>
+  <div>
+    <input type="checkbox" data-filter=".section.BUS" checked />Busch
+    <input type="checkbox" data-filter=".section.LIV" checked />Livingston
+    <input type="checkbox" data-filter=".section.CAC" checked />College Ave
+    <input type="checkbox" data-filter=".section.DNC" checked />Douglas/Cook
+    <input type="checkbox" data-filter=".section.NWK" checked />Newark  
+    <input type="checkbox" data-filter=".section.CAM" checked />Camden  
+  </div>
+  <a href="https://github.com/tevjef/Rutgers-Course-Tracker/blob/master/response-samples/courses-nk-nb.json">sample data</a>
+</div>
+<div class="result">
+  <h4>+  Search Results</h4>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+<script>
+
+$("[data-filter]").click(function() {
+  applyFilters();
+});
+var expanded = false;
+$(".result > h4").click(function() {
+  if (expanded) {
+    $('.course').removeClass("expanded");
+  }
+  else {
+    $('.course').addClass("expanded");
+  }
+  expanded = !expanded;
+});
+$.getJSON( "/static/sas.json.gz", function( data ) {
+  parseData(data);
+  applyFilters();
+  $(".title").click(function() {
+    $(this).parent().toggleClass("expanded");
+  });
+});
+
+function parseData(data) {
+  courses = "";
+  for(var i=0; i<data.length; i++) {
+    // filter course based on campus/unit/subject/level
+
+    // format data use data as-is amap or format on server and assign class
+    courses = courses + createCourse(data[i]);
+  }
+  $(courses).appendTo(".result");
+}
+
+function applyFilters() {
+  filters = $("[data-filter]:not(:checked)").map(function() {
+    return $(this).data("filter");
+  }).get().join(',');
+
+  $(".course").removeClass("hide");
+
+  $("#filters").remove();
+  $("<style type='text/css' id='filters'> "+filters+",.course.hide"+ "{display:none;} </style>").appendTo("head");
+
+  $(".course").filter(function(){
+      return $(this).find(".section:visible").length == 0;
+  }).addClass("hide");
+}
+
+function createCourse(c) {
+  var labels = [];
+  labels.push("u"+c.offeringUnitCode);
+  labels.push("s"+c.subject);
+  labels.push("l" + ((Number(c.courseNumber)-Number(c.courseNumber)%100)) );
+
+  var sections = "";
+  for(var i=0; i<c.sections.length; i++) {
+    var s = createSection(c.sections[i]);
+    sections = sections + s.print;
+  }
+
+  var ret = "<div class='course "+labels.join(" ")+"'>"+"<div class='title'>"+
+    "<span>"+c.offeringUnitCode+"</span>"+
+    "<span>"+c.subject+"</span>"+
+    "<span>"+c.courseNumber+"</span>"+
+    "<span>"+c.title+"</span>"+"</div>"+
+    sections+
+    "</div>";
+  return ret;
+}
+
+function createSection(s) {
+  var ret = {"labels": [], "print": ""};
+  ret.labels.push("status-"+s.openStatus);
+  var meetings = "";
+  for(var i=0; i<s.meetingTimes.length; i++) {
+    var m = createMeeting(s.meetingTimes[i]);
+    ret.labels = ret.labels.concat(m.labels);
+    meetings = meetings + "<li>"+m.print+"</li>";
+  }
+
+  ret.print = "<div class='section "+ret.labels.join(" ")+"'>"+
+    "<span class='status-"+s.openStatus+"'>"+"</span>"+
+    "<span>"+s.number+"</span>"+
+    "<span>"+s.index+"</span>"+
+    "<ul>"+meetings+"</ul>"+
+    "</div>";
+  return ret;
+}
+
+function createMeeting(m) {
+  var ret = {"labels": [], "print": ""};
+  if (m.meetingDay == null) {
+    ret.print = "<span>Hours by Arrangement</span>";
+  } else {
+    ret.print = "<span>"+m.meetingDay+"  "+m.startTime+" - "+m.endTime+"</span>";
+    ret.labels.push(m.meetingDay+m.pmCode);
+  }
+
+  if (m.campusAbbrev != null) {
+    ret.print += "<span>"+m.campusAbbrev+"</span>";
+    //fix d/c
+    ret.labels.push(m.campusAbbrev.replace("/", "N"));
+  } else {
+    ret.print += "<span></span>";
+  }
+  if (m.buildingCode != null) {
+    ret.print += "<span>"+m.buildingCode+"-"+m.roomNumber+"</span>";
+  } else {
+    ret.print += "<span></span>";
+  }
+
+  return ret;
+}
+
+// var courses = [{
+//   "subject": "198",
+//   "credits": 3,
+//   "offeringUnitCode": "21",
+//   "title": "INTRO TO COMPUTERS",
+//   "campusCode": "NK",
+//   "courseNumber": "100",
+
+//   "sections": [{
+//     "openStatus": true,
+//     "number": "70",
+//     "index": "08596",
+//     "instructors": [{"name": "VILLANEUVA, D"}],
+
+//     "meetingTimes": [{
+//       "meetingDay": "W",
+//       "pmCode": "P",
+//       "startTime": "0600",
+//       "endTime": "0720",
+//       "buildingCode": "ENG",
+//       "roomNumber": "309",
+//       "campusAbbrev": "NWK"
+//     }]
+//   }]
+// }];
+
+</script>
+
+</body>
+
+</html>
