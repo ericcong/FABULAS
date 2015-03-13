@@ -21,8 +21,8 @@
   margin-right: -4px;
   padding: 1em;
 }
-.filters > div {
-  margin: 1em 0;
+.filters > h4 {
+  margin: 1em 0 0.25em 0;
 }
 .filters td {
   padding: 0 0.5em;
@@ -77,14 +77,14 @@
   padding: 0.5em;
   border-bottom: 1px solid lightgrey;
 }
-.course > .section > span:nth-of-type(1).status-false + span {
+
+.course > .section.OS-false > span:nth-of-type(1) {
   background-color: red;
 }
-.course > .section > span:nth-of-type(1).status-true + span {
+.course > .section.OS-true > span:nth-of-type(1) {
   background-color: green;
 }
-
-.course > .section > span:nth-of-type(2) {
+.course > .section > span:nth-of-type(1) {
   display: inline-block;
   padding: 0.4em 0 0.2em 0;
   width: 2em;
@@ -116,61 +116,33 @@
 </head>
 
 <body>
-  <div class="filters">
-    <h4>Course Filter</h4><div>
-    <input type="checkbox" data-filter=".course.u01" checked />SAS-01
-    <input type="checkbox" data-filter=".course.u21" checked />SAS-21
-  </div>
-  <div>
-    <input type="checkbox" data-filter=".course.s198" checked />CS-198
-    <input type="checkbox" data-filter=".course.s350" checked />ENG-350
-    <input type="checkbox" data-filter=".course.s640" checked />MATH-640
-  </div>
-  <div>
-    <input type="checkbox" data-filter=".course.l100" checked />100
-    <input type="checkbox" data-filter=".course.l200" checked />200
-    <input type="checkbox" data-filter=".course.l300" checked />300
-    <input type="checkbox" data-filter=".course.l400" checked />400
-    <input type="checkbox" data-filter=".course.l500" checked />500
-    <input type="checkbox" data-filter=".course.l600" checked />600
-    <input type="checkbox" data-filter=".course.l700" checked />700
-    <input type="checkbox" data-filter=".course.l800" checked />800
-  </div>
-  <h4>Section Filter</h4>
-  <div>
-    <input type="checkbox" data-filter=".section.status-true" checked />Open
-    <input type="checkbox" data-filter=".section.status-false" checked />Close
-  </div>
+<div class="filters">
+  <a href="https://github.com/tevjef/Rutgers-Course-Tracker/blob/master/response-samples/courses-nk-nb.json">sample data</a>
+  <h4>Status Filter</h4>
+  <input type="checkbox" data-filter=".section.OS-true" checked />Open
+  <input type="checkbox" data-filter=".section.OS-false" checked />Close
+  <h4>Day/Time Filter</h4>
   <table>
     <tr>
       <td></td><td>M</td><td>T</td><td>W</td><td>Th</td><td>F</td>
     </tr>
     <tr>
       <td>Morning</td>
-      <td><input type="checkbox" data-filter=".section.MA" checked /></td>
-      <td><input type="checkbox" data-filter=".section.TA" checked /></td>
-      <td><input type="checkbox" data-filter=".section.WA" checked /></td>
-      <td><input type="checkbox" data-filter=".section.THA" checked /></td>
-      <td><input type="checkbox" data-filter=".section.FA" checked /></td>
+      <td><input type="checkbox" data-filter=".section.MT-MA" checked /></td>
+      <td><input type="checkbox" data-filter=".section.MT-TA" checked /></td>
+      <td><input type="checkbox" data-filter=".section.MT-WA" checked /></td>
+      <td><input type="checkbox" data-filter=".section.MT-THA" checked /></td>
+      <td><input type="checkbox" data-filter=".section.MT-FA" checked /></td>
     </tr>
     <tr>
       <td>Afteroon</td>
-      <td><input type="checkbox" data-filter=".section.MP" checked /></td>
-      <td><input type="checkbox" data-filter=".section.TP" checked /></td>
-      <td><input type="checkbox" data-filter=".section.WP" checked /></td>
-      <td><input type="checkbox" data-filter=".section.THP" checked /></td>
-      <td><input type="checkbox" data-filter=".section.FP" checked /></td>
+      <td><input type="checkbox" data-filter=".section.MT-MP" checked /></td>
+      <td><input type="checkbox" data-filter=".section.MT-TP" checked /></td>
+      <td><input type="checkbox" data-filter=".section.MT-WP" checked /></td>
+      <td><input type="checkbox" data-filter=".section.MT-THP" checked /></td>
+      <td><input type="checkbox" data-filter=".section.MT-FP" checked /></td>
     </tr>
   </table>
-  <div>
-    <input type="checkbox" data-filter=".section.BUS" checked />Busch
-    <input type="checkbox" data-filter=".section.LIV" checked />Livingston
-    <input type="checkbox" data-filter=".section.CAC" checked />College Ave
-    <input type="checkbox" data-filter=".section.DNC" checked />Douglas/Cook
-    <input type="checkbox" data-filter=".section.NWK" checked />Newark  
-    <input type="checkbox" data-filter=".section.CAM" checked />Camden  
-  </div>
-  <a href="https://github.com/tevjef/Rutgers-Course-Tracker/blob/master/response-samples/courses-nk-nb.json">sample data</a>
 </div>
 <div class="result">
   <h4>+  Search Results</h4>
@@ -180,9 +152,20 @@
 
 <script>
 
-$("[data-filter]").click(function() {
+var allUnits=[], allSubjects=[], allLevels=[], allCampuses=[];  
+
+$.getJSON( "/static/sas.json.gz", function( data ) {
+  allUnits=[]; allSubjects=[]; allLevels=[]; allCampuses=[];  
+  parseData(data);
   applyFilters();
+  $(".title").click(function() {
+    $(this).parent().toggleClass("expanded");
+  });
+  $("[data-filter]").click(function() {
+    applyFilters();
+  });
 });
+
 var expanded = false;
 $(".result > h4").click(function() {
   if (expanded) {
@@ -192,13 +175,6 @@ $(".result > h4").click(function() {
     $('.course').addClass("expanded");
   }
   expanded = !expanded;
-});
-$.getJSON( "/static/sas.json.gz", function( data ) {
-  parseData(data);
-  applyFilters();
-  $(".title").click(function() {
-    $(this).parent().toggleClass("expanded");
-  });
 });
 
 function parseData(data) {
@@ -210,6 +186,10 @@ function parseData(data) {
     courses = courses + createCourse(data[i]);
   }
   $(courses).appendTo(".result");
+  $("<h4>Campus Filter</h4>"+createFilters(allCampuses, ".section.")).appendTo(".filters");
+  $("<h4>Course Level Filter</h4>"+createFilters(allLevels, ".course.")).appendTo(".filters");
+  $("<h4>Unit Filter</h4>"+createFilters(allUnits, ".course.")).appendTo(".filters");
+  $("<h4>Subject Filter</h4>"+createFilters(allSubjects, ".course.")).appendTo(".filters");
 }
 
 function applyFilters() {
@@ -227,71 +207,98 @@ function applyFilters() {
   }).addClass("hide");
 }
 
+var template = "<label><input type='checkbox' data-filter='{filter-value}' checked />{display-value}</label>";
+function createFilters(filter, prefix) {
+  var s = "";
+  for(var k in filter) {
+    s = s + template.replace("{filter-value}", prefix+k).replace("{display-value}", filter[k]);
+  }
+  return s;
+}
+
 function createCourse(c) {
   var labels = [];
-  labels.push("u"+c.offeringUnitCode);
-  labels.push("s"+c.subject);
-  labels.push("l" + ((Number(c.courseNumber)-Number(c.courseNumber)%100)) );
+  labels.push("OUC-"+c.offeringUnitCode);
+  labels.push("SUB-"+c.subject);
+  labels.push("LVL-" + ((Number(c.courseNumber)-Number(c.courseNumber)%100)) );
+
+  allUnits["OUC-"+c.offeringUnitCode] = c.offeringUnitCode;
+  allSubjects["SUB-"+c.subject] = c.subject;
+  allLevels["LVL-"+((Number(c.courseNumber)-Number(c.courseNumber)%100))] = ((Number(c.courseNumber)-Number(c.courseNumber)%100));
 
   var sections = "";
   for(var i=0; i<c.sections.length; i++) {
     var s = createSection(c.sections[i]);
-    sections = sections + s.print;
+    sections = sections + s.content;
   }
 
-  var ret = "<div class='course "+labels.join(" ")+"'>"+"<div class='title'>"+
+  var content = "<div class='course "+labels.join(" ")+"'>"+"<div class='title'>"+
     "<span>"+c.offeringUnitCode+"</span>"+
     "<span>"+c.subject+"</span>"+
     "<span>"+c.courseNumber+"</span>"+
     "<span>"+c.title+"</span>"+"</div>"+
     sections+
     "</div>";
-  return ret;
+
+  return content;
 }
 
 function createSection(s) {
-  var ret = {"labels": [], "print": ""};
-  ret.labels.push("status-"+s.openStatus);
+  var labels = {};
+  var content = ""
   var meetings = "";
   for(var i=0; i<s.meetingTimes.length; i++) {
     var m = createMeeting(s.meetingTimes[i]);
-    ret.labels = ret.labels.concat(m.labels);
-    meetings = meetings + "<li>"+m.print+"</li>";
+    mergeFrom(labels, m.labels);
+    meetings = meetings + "<li>"+m.content+"</li>";
   }
+  labels["OS-"+s.openStatus] = "";
 
-  ret.print = "<div class='section "+ret.labels.join(" ")+"'>"+
-    "<span class='status-"+s.openStatus+"'>"+"</span>"+
-    "<span>"+s.number+"</span>"+
-    "<span>"+s.index+"</span>"+
+  content = "<div class='section "+keys(labels).join(" ")+"'>"+
+    "<span>"+s.number+"</span>"+"<span>"+s.index+"</span>"+
     "<ul>"+meetings+"</ul>"+
     "</div>";
-  return ret;
+
+  return {"labels":labels, "content":content};
 }
 
 function createMeeting(m) {
-  var ret = {"labels": [], "print": ""};
+  var labels = {};
+  var content = "";
   if (m.meetingDay == null) {
-    ret.print = "<span>Hours by Arrangement</span>";
+    content = "<span>Hours by Arrangement</span>";
   } else {
-    ret.print = "<span>"+m.meetingDay+"  "+m.startTime+" - "+m.endTime+"</span>";
-    ret.labels.push(m.meetingDay+m.pmCode);
+    content = "<span>"+m.meetingDay+"  "+m.startTime+" - "+m.endTime+"</span>";
+    labels["MT-"+m.meetingDay+m.pmCode] = "";
   }
 
   if (m.campusAbbrev != null) {
-    ret.print += "<span>"+m.campusAbbrev+"</span>";
+    content += "<span>"+m.campusAbbrev+"</span>";
     //fix d/c
-    ret.labels.push(m.campusAbbrev.replace("/", "N"));
+    labels["CC-"+m.campusAbbrev.replace("/", "N")] = m.campusAbbrev;
+    allCampuses["CC-"+m.campusAbbrev.replace("/", "N")] = m.campusAbbrev;
   } else {
-    ret.print += "<span></span>";
+    content += "<span></span>";
   }
   if (m.buildingCode != null) {
-    ret.print += "<span>"+m.buildingCode+"-"+m.roomNumber+"</span>";
+    content += "<span>"+m.buildingCode+"-"+m.roomNumber+"</span>";
   } else {
-    ret.print += "<span></span>";
+    content += "<span></span>";
   }
 
-  return ret;
+  return {"labels":labels, "content":content};
 }
+
+function keys(o) {
+  var keys = [];
+  for(k in o) keys.push(k);
+  return keys;
+}
+
+function mergeFrom(o1, o2) {
+  for (var attr in o2) { o1[attr] = o2[attr]; }
+}
+
 
 // var courses = [{
 //   "subject": "198",
