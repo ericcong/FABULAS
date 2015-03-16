@@ -11,129 +11,107 @@
   <style>
   @import url("/static/ui.css");
 
-.filters {
-  display: inline-block;
-  width: 320px;
-  vertical-align: top;
-  margin-right: -4px;
-  padding: 1em;
-}
-.filters h4 {
-  margin: 1em 0 0.25em 0;
-}
-.filters table { width: 100%; }
-.filters td { width: 1.4em; text-align: center; }
-.filters tr > td:first-child { text-align: left; }
+  .filters {
+    display: inline-block;
+    width: 320px;
+    vertical-align: top;
+    margin-right: -4px;
+    padding: 1em;
+  }
+  .filters table { width: 100%; }
+  .filters td { width: 1.4em; text-align: center; }
+  .filters tr > td:first-child { text-align: left; }
 
-.filters label {
-  margin-right: 0.5em;
-}
+  #query-result {
+    display: inline-block;
+    vertical-align: top;
+    width: calc(100% - 320px);
+    margin: 1em 0;
+  }
 
-.result {
-  display: inline-block;
-  vertical-align: top;
-  width: calc(100% - 320px);
-  padding: 1em;
-}
-.result > h4 {
-  padding: 1em;
-  background-color: lightgrey;
-  width: 300px;
-  border-radius: 10px 10px 0 0;
-  border: 1px solid grey;
-  border-width: 0px 0px 0 0px;
-}
+  .course {
+    width: 100%;
+    height: 2em;
+    overflow: hidden;
+    border: 1px solid grey;
+    border-width: 1px 1px 0px 1px;
+  }
 
-.course {
-  width: 100%;
-  height: 2em;
-  overflow: hidden;
-  border: 1px solid grey;
-  border-width: 1px 1px 0px 1px;
-}
+  .course.expanded {
+    height: auto;  
+  }
 
-.course.expanded {
-  height: auto;  
-}
+  .course > .title {
+    background-color: lightgrey;
+    padding: 0.5em;
+  }
 
-.course > .title {
-  background-color: lightgrey;
-  padding: 0.5em;
-}
+  .course > .header {
+    padding: 0.5em;
+  }
+  .course > .title > span:nth-of-type(1):after {
+    content: ":";
+  }
+  .course > .title > span:nth-of-type(2):after {
+    content: ":";
+  }
+  .course > .title > span:nth-of-type(3) {
+    display: inline-block;
+    margin-right: 2em;
+  }
 
-.course > .header {
-  padding: 0.5em;
-}
-.course > .title > span:nth-of-type(1):after {
-  content: ":";
-}
-.course > .title > span:nth-of-type(2):after {
-  content: ":";
-}
-.course > .title > span:nth-of-type(3) {
-  display: inline-block;
-  margin-right: 2em;
-}
+  .course > .section {
+    padding: 0.5em;
+    border-bottom: 1px solid lightgrey;
+  }
 
-.course > .section {
-  padding: 0.5em;
-  border-bottom: 1px solid lightgrey;
-}
+  .course > .section.OS-false > span:nth-of-type(1) {
+    background-color: red;
+  }
+  .course > .section.OS-true > span:nth-of-type(1) {
+    background-color: green;
+  }
+  .course > .section > span:nth-of-type(1) {
+    display: inline-block;
+    padding: 0.4em 0 0.2em 0;
+    width: 2em;
+    margin-right: 1em;
+    text-align: center;
+    color: white;
+  }
 
-.course > .section.OS-false > span:nth-of-type(1) {
-  background-color: red;
-}
-.course > .section.OS-true > span:nth-of-type(1) {
-  background-color: green;
-}
-.course > .section > span:nth-of-type(1) {
-  display: inline-block;
-  padding: 0.4em 0 0.2em 0;
-  width: 2em;
-  margin-right: 1em;
-  text-align: center;
-  color: white;
-}
+  .course > .section > ul {
+    display: inline-block;
+    list-style-type: none;
+    margin-left: 1em;
+    vertical-align: middle;
+  }
 
-.course > .section > ul {
-  display: inline-block;
-  list-style-type: none;
-  margin-left: 1em;
-  vertical-align: middle;
-}
+  .course > .section > ul > li > span:nth-of-type(1) {
+    display: inline-block;
+    margin-right: 1em;
+    width: 12em;
+  }
+  .course > .section > ul > li > span:nth-of-type(2) {
+    display: inline-block;
+    width: 3em;
+    margin-right: 1em;
+  }
 
-.course > .section > ul > li > span:nth-of-type(1) {
-  display: inline-block;
-  margin-right: 1em;
-  width: 12em;
-}
-.course > .section > ul > li > span:nth-of-type(2) {
-  display: inline-block;
-  width: 3em;
-  margin-right: 1em;
-}
+  .page {
+    display: none;
+    padding: 0.5em;
+  }
 
-.page {
-  display: none;
-}
-
-#queries {
-  display: inline-block;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 1px solid black;
-  background-color: lightgrey;
-  padding: 1em;
-}
-
-.campus, .level {
-  display: inline-block;
-  width: 50%;
-  margin-right: -4px;
-  vertical-align: top;
-  border: 0px solid black;
-}
+  #queries {
+    display: inline-block;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid black;
+    background-color: lightgrey;
+    padding: 1em;
+  }
 
 .term > label {
   display: inline-block;
@@ -171,6 +149,7 @@
 
 #subject-query { height: 9em; }
 #location-filters { height: 9em; }
+#expand { width: 5em; text-align: center; }
 
 </style>
 
@@ -289,16 +268,25 @@
           </div>
         </div>
       </form>
+    </div>
+    <!-- End of Filters Pane -->
 
-      <div class="dynamic-filters"></div>
+      <form class="window" id="query-result">
+        <div class="controls">
+          <span class="title">Query Result</span><span id="expand" class="title">+</span>
+          <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+        </div>
+        <div class="content result">
+          <div class="data"></div>
+          <a href="https://github.com/tevjef/Rutgers-Course-Tracker/blob/master/response-samples/courses-nk-nb.json">sample data</a>
+        </div>
+      </form>
     </div>
-    <div class="result">
-      <a href="https://github.com/tevjef/Rutgers-Course-Tracker/blob/master/response-samples/courses-nk-nb.json">sample data</a>
-      <h4 class="view">+  Search Results</h4>
-      <div class="data"></div>
-    </div>
+    <!-- End of Result Pane -->
   </div>
 </div>
+
 <div id="home">
   <div id="message"></div>
   <div id="queries">
@@ -345,7 +333,7 @@ var allUnits=[], allSubjects=[], allLevels=[], allLocations=[]; allCampuses=[];
 
 
 var expanded = false;
-$(".result > h4").click(function() {
+$("#expand").click(function() {
   if (expanded) {
     $('.course').removeClass("expanded");
   }
