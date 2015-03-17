@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>SOC Home</title>
+
+  <style>
+
+* { margin:0; padding: 0; box-sizing: border-box; }
+body { text-align: center; }
+
+.queries {
+  margin: 2em auto;
+  display: inline-block;
+}
+
+.queries div > h3 {
+  margin-bottom: 0.25em;
+}
+
+.queries input[type='submit'] {
+  display: block;
+  margin-top: 1em;
+}
+
+.term > label {
+  display: inline-block;
+}
+
+.campus, .level {
+  padding-bottom: 1em;
+}
+
+.campus > label, .level > label {
+  display: block;
+}
+
+.subject-search, .term, .school-search {
+  border-bottom: 1px dotted black;
+  margin-bottom: 1em;
+  padding: 0 2em 1em 2em;
+  text-align: left;
+}
+
+</style>
+
+</head>
+
+<body>
+<div>
+  <div class="message"></div>
+  <div class="queries">
+    <form action="/static/soc2.html#subjects">
+      <div class="term">
+        <h3>Term</h3>
+        <label><input type="radio" name="semester" value="92015" checked /> Fall 2015</label>
+        <label><input type="radio" name="semester" value="72015" /> Summer 2015</label>
+        <label><input type="radio" name="semester" value="12015" /> Spring 2015</label>
+      </div>
+      <div class="subject-search">
+        <div class="campus">
+          <h3>Campuse</h3>
+          <label><input type="checkbox" name="campus" value="NB" checked /> New Brunswick</label>
+          <label><input type="checkbox" name="campus" value="NK" /> Newark</label>
+          <label><input type="checkbox" name="campus" value="CM" /> Camden</label>      
+        </div>
+        <div class="level">
+          <h3>Level</h3>
+          <label><input type="checkbox" name="level" value="U" data-query-level="U" checked /> Undergraduate</label>
+          <label><input type="checkbox" name="level" value="G" data-query-level="G" checked /> Graduate</label>
+        </div>
+        <input type="submit" value="Continue" />
+      </div>
+      <div class="school-search">
+        <h3>School</h3>
+        <select name="school" data-query-school>
+          <option value="01">School Arts & Scient</option>
+          <option value="22">Rutgers Business School</option>
+        </select>
+        <input type="submit" value="Continue" />
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+</body>
+
+</html>
