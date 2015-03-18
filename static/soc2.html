@@ -250,9 +250,10 @@ loadData();
 var subjectList = null;
 function loadReferences() {
   //TODO generalize it
+  //TODO make sure data is sorted on server
   if (subjectList == null) { 
-    console.log("loading subject list");
     $.getJSON( "/static/subjects.json.gz", function( data ) {
+      console.log("reference data loaded");
       subjectList = data;
       var s = "";
       for (k in subjectList) {
@@ -266,10 +267,15 @@ function loadReferences() {
 
 var allUnits=[], allSubjects=[], allLevels=[], allLocations=[]; allCampuses=[];
 function loadData() {
+  // TODO: make sure json data with proper expiration header
+  // load all courses
   $.getJSON( "/static/all.json.gz", function( data ) {
-    allUnits=[]; allSubjects=[]; allLevels=[]; allLocations=[]; allCampuses=[];  
+    console.log("course data loaded");
+
+    // parse data and generate dom nodes
     parseData(data);
-    applyFilters();
+
+    // setup UI behaviors
     $(".title").click(function() {
       $(this).parent().toggleClass("expanded");
     });
@@ -280,25 +286,50 @@ function loadData() {
 }
 
 function parseData(data) {
-  var courses = "";
-  for(var i=0; i<data.length; i++) {
-    // filter course based on campus/unit/subject/level
+  console.log("refreshing data");
 
+  // clear up filter labels
+  allUnits=[]; allSubjects=[]; allLevels=[]; allLocations=[]; allCampuses=[];  
+  
+  var courses = "";
+  // create innerHTML for all courses from server feed
+  for(var i=0; i<data.length; i++) {
     // format data use data as-is amap or format on server and assign class
     courses = courses + createCourse(data[i]);
   }
   courses = "<div class='data'>"+courses+"</div>";
-  $(".result").empty();
-  $(".dynamic-filters").empty();
-  console.log("refreshing data");
+
+  // create domTree with all courses from server feed
   var data = $(courses);
+
+  // query url remove courses from the domTree before inserting to page
   data = applyQueries(params, data);
+
+  // insert search result domTree to page
+  $(".result").empty();
   data.appendTo(".result");
 
-  $(createFilters(allLocations, ".section.")).appendTo("#location-filters .multi-check");
-  $(createFilters(allLevels, ".course.")).appendTo("#level-filters .multi-check");
-  $(createFilters(allUnits, ".course.")).appendTo("#unit-filters .multi-check");
-  $(createFilters(allSubjects, ".course.")).appendTo("#subject-filters .multi-check");
+  // get all filter values from the final domTree
+  var afterQuery = [];
+  $(".course").each(function( index ) {
+    var classes = $(this).attr("class").split(" ");
+    for (var i=1; i < classes.length; i++) {
+      afterQuery[classes[i]] = classes[i]; 
+    }
+  });
+  $(".section").each(function( index ) {
+    var classes = $(this).attr("class").split(" ");
+    for (var i=1; i < classes.length; i++) {
+      afterQuery[classes[i]] = classes[i]; 
+    }
+  });
+
+  // insert filters based on what are in the search result domTree
+  $(".dynamic-filters").empty();
+  $(createFilters(allLocations, ".section.", afterQuery)).appendTo("#location-filters .multi-check");
+  $(createFilters(allLevels, ".course.", afterQuery)).appendTo("#level-filters .multi-check");
+  $(createFilters(allUnits, ".course.", afterQuery)).appendTo("#unit-filters .multi-check");
+  $(createFilters(allSubjects, ".course.", afterQuery)).appendTo("#subject-filters .multi-check");
 }
 
 function applyQueries(params, domTree) {
@@ -350,12 +381,6 @@ function applyQueries(params, domTree) {
   //     return $(this).find(".section:visible").length == 0;
   // }).addClass("hide");
 
-  // TODO this may not needed after using query to remove them from DOM tree
-  // Remove checkbox from filters list
-  for(var q in queries) {
-    $("[data-filter='"+queries[q]+"']").parent().remove();
-  }
-
   return domTree;
 }
 
@@ -376,10 +401,14 @@ function applyFilters() {
 
 var template = "<label><input type='checkbox' data-filter='{filter-value}' checked /><span>{display-value}</span></label>";
 
-function createFilters(filter, prefix) {
+function createFilters(filter, prefix, afterQuery) {
+  var sorted = Object.keys(filter).sort();
   var s = "";
-  for(var k in filter) {
-    s = s + template.replace("{filter-value}", prefix+k).replace("{display-value}", filter[k]);
+  for(var k in sorted) {
+    try {
+      if (afterQuery[sorted[k]]!=null)
+        s = s + template.replace("{filter-value}", prefix+sorted[k]).replace("{display-value}", filter[sorted[k]]);
+    } catch(err) { /* means not in the array */ }
   }
   return s;
 }
