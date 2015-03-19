@@ -12,12 +12,12 @@
   transform: translateX(-50%) translateY(-50%);
   background: rgba(255,255,255,0.97); z-index: 100;
 }
-.window .controls { height: 2em; padding: 0.5em;
+.window > .controls { height: 2em; padding: 0.5em;
   border-bottom: 1px solid #999999;
 }
-.window.min .controls { border-width: 0; }
+.window.min > .controls { border-width: 0; }
 
-.window .title { display: inline-block; max-width: calc(100% - 9em);
+.window > .controls > .title { display: inline-block; max-width: calc(100% - 9em);
   color: #777777; background: rgba(0,0,0,0); 
   font-family: sans-serif; font-size: 95%;
   white-space: nowrap; overflow: scroll;
@@ -39,7 +39,7 @@
   background: tomato; border: 1px solid red;
 }
 
-.window .content {
+.window > .content {
   display: block; width: 100%; padding: 0.5em;
   height: calc(100% - 1.5em); overflow: scroll;
 }

@@ -11,22 +11,26 @@
   <style>
   @import url("/static/ui.css");
 
+  .page {
+    padding: 0.5em;
+  }
+
   .filters {
     display: inline-block;
     width: 320px;
     vertical-align: top;
     margin-right: -4px;
-    padding: 1em;
+    padding-right: 0.5em;
   }
   .filters table { width: 100%; }
   .filters td { width: 1.4em; text-align: center; }
   .filters tr > td:first-child { text-align: left; }
+  .key { width: 100%; display: block; font-size: 100%; }
 
   #query-result {
     display: inline-block;
     vertical-align: top;
     width: calc(100% - 320px);
-    margin: 1em 0;
   }
 
   .course {
@@ -44,6 +48,11 @@
   .course > .title {
     background-color: lightgrey;
     padding: 0.5em;
+    width: 100%;
+  }
+
+  .course > .title > .short-desc {
+    text-transform: uppercase;
   }
 
   .course > .header {
@@ -89,8 +98,9 @@
 
   .course > .section > ul > li > span:nth-of-type(1) {
     display: inline-block;
-    margin-right: 1em;
-    width: 12em;
+    margin-right: 2em;
+    width: 10em;
+    text-align: right;
   }
   .course > .section > ul > li > span:nth-of-type(2) {
     display: inline-block;
@@ -110,6 +120,19 @@
 <div id="subjects" class="page">
   <div id="courses">
     <div class="filters">
+
+      <form class="window" action="/static/soc2.html" id="key-query">
+        <div class="controls">
+          <span class="title">Choose Keyword</span>
+          <input type="submit" value="Submit" />          
+          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+        </div>
+        <div class="content">
+          <div>
+            <input type="text" name="key" class="key" placeholder="keyword" />
+          </div>
+        </div>
+      </form>
 
       <form class="window" action="/static/soc2.html" id="subject-query">
         <div class="controls">
@@ -370,8 +393,15 @@ function applyQueries(params, domTree) {
 
   console.log(queries);
 
+  // remove based on query
   $(domTree).find(queries.join(",")).remove();
 
+  // remove based on title key word
+  if (params.key != null) {
+    $(domTree).find(".course .title:not(:contains('"+(params.key+"").toLowerCase()+"'))").each(function(index) {
+      $(this).parent().remove();
+    });
+  }
   // Use CSS to hide courses based on query
   // TODO we can remove them from DOM tree before insert into page
   // $("<style type='text/css' id='queries'> "+queries.join(",")+",.course.hide"+"{display:none;} </style>").appendTo("head");
@@ -424,6 +454,8 @@ function createCourse(c) {
   labels.push("LVL-" + ((Number(c.courseNumber)-Number(c.courseNumber)%100)) );
   allLevels["LVL-"+((Number(c.courseNumber)-Number(c.courseNumber)%100))] = ((Number(c.courseNumber)-Number(c.courseNumber)%100));
 
+  labels.push("CC-"+c.campusCode);
+
   var sections = "";
   for(var i=0; i<c.sections.length; i++) {
     var s = createSection(c.sections[i]);
@@ -434,7 +466,7 @@ function createCourse(c) {
     "<span>"+c.offeringUnitCode+"</span>"+
     "<span>"+c.subject+"</span>"+
     "<span>"+c.courseNumber+"</span>"+
-    "<span>"+c.title+"</span>"+"</div>"+
+    "<span class='short-desc'>"+c.title.toLowerCase()+"</span>"+"</div>"+
     sections+
     "</div>";
 

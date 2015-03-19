@@ -25,21 +25,22 @@ body { text-align: center; }
 .queries input[type='submit'] {
   display: block;
   margin-top: 1em;
+  margin: 0 auto;
+  color: steelblue;
 }
 
-.term > label {
+.campus, .level, .term, .school {
   display: inline-block;
+  padding: 1em;
+  vertical-align: top;
 }
 
-.campus, .level {
-  padding-bottom: 1em;
-}
-
-.campus > label, .level > label {
+.campus > label, .level > label, .term > label {
   display: block;
+  text-align: left;
 }
 
-.subject-search, .term, .school-search {
+.subject-search, .school-search {
   border-bottom: 1px dotted black;
   margin-bottom: 1em;
   padding: 0 2em 1em 2em;
@@ -55,13 +56,13 @@ body { text-align: center; }
   <div class="message"></div>
   <div class="queries">
     <form action="/static/soc2.html#subjects">
-      <div class="term">
-        <h3>Term</h3>
-        <label><input type="radio" name="semester" value="92015" checked /> Fall 2015</label>
-        <label><input type="radio" name="semester" value="72015" /> Summer 2015</label>
-        <label><input type="radio" name="semester" value="12015" /> Spring 2015</label>
-      </div>
       <div class="subject-search">
+        <div class="term">
+          <h3>Term</h3>
+          <label><input type="radio" name="semester" value="92015" checked /> Fall 2015</label>
+          <label><input type="radio" name="semester" value="72015" /> Summer 2015</label>
+          <label><input type="radio" name="semester" value="12015" /> Spring 2015</label>
+        </div>
         <div class="campus">
           <h3>Campuse</h3>
           <label><input type="checkbox" name="campus" value="NB" checked /> New Brunswick</label>
@@ -75,12 +76,22 @@ body { text-align: center; }
         </div>
         <input type="submit" value="Continue" />
       </div>
+    </form>
+    <form action="/static/soc2.html#subjects">
       <div class="school-search">
+        <div class="term">
+          <h3>Term</h3>
+          <label><input type="radio" name="semester" value="92015" checked /> Fall 2015</label>
+          <label><input type="radio" name="semester" value="72015" /> Summer 2015</label>
+          <label><input type="radio" name="semester" value="12015" /> Spring 2015</label>
+        </div>
+        <div class="school">
         <h3>School</h3>
-        <select name="school" data-query-school>
-          <option value="01">School Arts & Scient</option>
-          <option value="22">Rutgers Business School</option>
-        </select>
+          <select name="school" data-query-school>
+            <option value="01">School Arts & Scient</option>
+            <option value="22">Rutgers Business School</option>
+          </select>
+        </div>
         <input type="submit" value="Continue" />
       </div>
     </form>
