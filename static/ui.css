@@ -48,8 +48,11 @@
 .multi-check { width: 100%; }
 .multi-check:empty { display: none; }
 
-.multi-check > label { display: inline-block; width: 100%;
-   margin: 0.25em -4px 0.25em 0; margin-right: -4px; color: #555555; vertical-align: top;
+.multi-check > .controls > .keyword { display: inline-block; width: calc(100% - 2em); 
+  margin: 0 0.5em 0.5em 0; font-size: 90%; color: #555555; }
+
+.multi-check > label { display: inline-block; width: 100%; margin: 0.25em -4px 0.25em 0; 
+  margin-right: -4px; color: #555555; vertical-align: top; text-transform: capitalize;
 }
 .multi-check > label > input { display: none; }
 .multi-check > label > input:checked + span { color: steelblue; }

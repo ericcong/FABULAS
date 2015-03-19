@@ -142,6 +142,11 @@
         </div>
         <div class="content">
           <div class="multi-check">
+            <div class="controls">
+              <input type="text" class="keyword" onkeyup="filterCheckList(this)" />
+              <input type="checkbox" class="checkall" onclick="$(this).parent().parent().find('label input').prop('checked', $(this).prop('checked'));" />
+            </div>
+            <!-- check list go here -->          
           </div>
         </div>
       </form>
@@ -264,6 +269,7 @@
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="/static/ui.js"></script>
 
 <script>
 
@@ -281,7 +287,7 @@ function loadReferences() {
       var s = "";
       for (k in subjectList) {
         s = s+"<label><input type='checkbox' name='subject' value='"+subjectList[k].code+"' /><span>"+
-          subjectList[k].code+" - "+subjectList[k].description+"</span></label>";
+          subjectList[k].code+" - "+subjectList[k].description.toLowerCase()+"</span></label>";
       }
       $("#subject-query .multi-check").append(s);
     });
