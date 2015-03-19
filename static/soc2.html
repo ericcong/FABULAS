@@ -298,7 +298,7 @@ var allUnits=[], allSubjects=[], allLevels=[], allLocations=[]; allCampuses=[];
 function loadData() {
   // TODO: make sure json data with proper expiration header
   // load all courses
-  $.getJSON( "/static/all.json.gz", function( data ) {
+  $.getJSON( "/static/20151courses.json.gz", function( data ) {
     console.log("course data loaded");
 
     // parse data and generate dom nodes
