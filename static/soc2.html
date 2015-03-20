@@ -256,7 +256,9 @@
           <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
           <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
         </div>
-        <div class="content result">
+        <div class="content">
+          <div class="summary"></div>
+          <div class="result"></div>
           <a href="https://github.com/tevjef/Rutgers-Course-Tracker/blob/master/response-samples/courses-nk-nb.json">sample data</a>
         </div>
       </form>
@@ -314,6 +316,13 @@ function loadData() {
   });
 }
 
+function loadPage(i) {
+  $(".result").empty();
+  pages[i].appendTo(".result");
+}
+
+var pages = []; 
+var pagesize = 2000;
 function parseData(data) {
   console.log("refreshing data");
 
@@ -335,8 +344,15 @@ function parseData(data) {
   data = applyQueries(params, data);
 
   // insert search result domTree to page
-  $(".result").empty();
-  data.appendTo(".result");
+  var numberOfCourses = data.children().length;
+  for (var i=0; i<Math.floor(numberOfCourses/pagesize); i++) {
+    pages[i] = data.children().slice(0, pagesize).detach();
+    console.log("page "+i);
+  }
+  $(".summary").append(numberOfCourses+" courses in "+pages.length+" pages"+"<a onclick='loadPage(2)'>2</a>");
+  loadPage(0);
+
+  //data.appendTo(".result");
 
   // get all filter values from the final domTree
   var afterQuery = [];
@@ -427,6 +443,7 @@ function applyFilters() {
 
   $(".course").removeClass("hide");
 
+  //remove old CSS 
   $("#filters").remove();
   $("<style type='text/css' id='filters'> "+filters+",.course.hide"+ "{display:none;} </style>").appendTo("head");
 
