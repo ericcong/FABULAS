@@ -202,6 +202,21 @@
 
       <form class="window">
         <div class="controls">
+          <span class="title">Type Filter</span>
+          <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+        </div>
+        <div class="content">
+          <div class="multi-check">
+            <label><input type="checkbox" data-filter=".section.CT-ONCAMPUS" checked /><span>Traditional</span></label>
+            <label><input type="checkbox" data-filter=".section.CT-ONLINE" checked /><span>Online</span></label>
+            <label><input type="checkbox" data-filter=".section.CT-HYBRID" checked /><span>Hybrid</span></label>
+          </div>
+        </div>
+      </form>
+
+      <form class="window">
+        <div class="controls">
           <span class="title">Day/Time Filter</span>
           <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
           <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
@@ -230,6 +245,16 @@
               <td><input type="checkbox" data-filter=".section.MT-FP" checked /></td>
               <td><input type="checkbox" data-filter=".section.MT-SP" checked /></td>
               <td><input type="checkbox" data-filter=".section.MT-SUP" checked /></td>
+            </tr>
+            <tr>
+              <td>Evening</td>
+              <td><input type="checkbox" data-filter=".section.MT-MN" checked /></td>
+              <td><input type="checkbox" data-filter=".section.MT-TN" checked /></td>
+              <td><input type="checkbox" data-filter=".section.MT-WN" checked /></td>
+              <td><input type="checkbox" data-filter=".section.MT-THN" checked /></td>
+              <td><input type="checkbox" data-filter=".section.MT-FN" checked /></td>
+              <td><input type="checkbox" data-filter=".section.MT-SN" checked /></td>
+              <td><input type="checkbox" data-filter=".section.MT-SUN" checked /></td>
             </tr>
           </table>
         </div>
@@ -344,7 +369,6 @@ function loadReferences() {
     for (k in list) {
       allUnits[list[k].code] = list[k].description.toLowerCase();  
     }
-    console.log(allUnits);
   });
 }
 
@@ -406,24 +430,24 @@ function parseData(data) {
   console.log("refreshing data");
   
   var courses = "";
-  // create innerHTML for all courses from server feed
+  // create innerHTML for all courses after query from server feed
   for(var i=0; i<data.length; i++) {
     // format data use data as-is amap or format on server and assign class
-    courses = courses + createCourse(data[i]);
+    // query the json object before creating dom node
+    if (query(data[i]))
+      courses = courses + createCourse(data[i]);
   }
   courses = "<div class='data'>"+courses+"</div>";
 
   // create domTree with all courses from server feed
   var data = $(courses);
 
-  // query url remove courses from the domTree before inserting to page
-  data = applyQueries(params, data);
-
   // insert search result domTree to page
   var numberOfCourses = data.children().length;
   for (var i=0; i<Math.floor(numberOfCourses/pagesize)+1; i++) {
     pages[i] = data.children().slice(0, pagesize).detach();
   }
+  // create summary info of search result 
   $(".summary").append("Total "+numberOfCourses+" courses found.");
   if (pages.length > 1) {
     for (var i=0; i<pages.length; i++) {
@@ -432,77 +456,41 @@ function parseData(data) {
   }
 }
 
-function applyQueries(params, domTree) {
-  var q = [];
-  if (params.level != null && params.level.length == 1) {
-    q = [];
-    if ("G"==params.level[0]) {
-      q.push(".course.LVL-500");
-      q.push(".course.LVL-600");
-      q.push(".course.LVL-700");
-      q.push(".course.LVL-800");
-
+function query(course) {
+  try { // query campus code
+    if (params.campus && params.campus.indexOf(course.campusCode)<0) return false;
+  } catch(err) {}
+  try { // query school code
+    if (params.school && params.school.indexOf(course.offeringUnitCode)<0) return false;
+  } catch(err) {}
+  try { // query subject code
+    if (params.subject && params.subject.indexOf(course.subject)<0) return false;
+  } catch(err) {}
+  try { // query core code
+    if (params.core) {
+      var found = false;
+      for(var k in course.coreCodes) {
+        if (params.core.indexOf(course.coreCodes[k].code.toUpperCase())>=0) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) return false;
     }
-    if ("U"==params.level[0]) {
-      q.push(".course.LVL-0");
-      q.push(".course.LVL-100");
-      q.push(".course.LVL-200");
-      q.push(".course.LVL-300");
-      q.push(".course.LVL-400");
+  } catch(err) {}
+  try { // query level code
+    if (params.level && params.level.indexOf(
+      ""+((Number(course.courseNumber)-Number(course.courseNumber)%100)))<0) return false;
+  } catch(err) {}
+  try { // query keyword
+    if (params.key) {
+      if (course.title.toLowerCase().indexOf(params.key)<0 &&
+          course.title.toLowerCase().indexOf(params.key)<0
+      ) return false;
     }
-    console.log(q.join(","));
-    var r = $(domTree).find(q.join(",")).detach();
-    $(domTree).empty().append(r);
-  }
+  } catch(err) {}
 
-  if (params.campus != null) {
-    q = [];
-    for(var k in params.campus) {
-      q.push(".course.CC-"+params.campus[k]);
-    }
-    console.log(q.join(","));
-    var r = $(domTree).find(q.join(",")).detach();
-    $(domTree).empty().append(r);
-  }
-
-  if (params.school != null) {
-    q = [];
-    for(var k in params.school) {
-      q.push(".course.OUC-"+params.school[k]);
-    }
-    console.log(q.join(","));
-    var r = $(domTree).find(q.join(",")).detach();
-    $(domTree).empty().append(r);
-  }
-
-  if (params.subject != null) {
-    q = [];
-    for(var k in params.subject) {
-      q.push(".course.SUB-"+params.subject[k]);
-    }
-    console.log(q.join(","));
-    var r = $(domTree).find(q.join(",")).detach();
-    $(domTree).empty().append(r);
-  }
-
-  if (params.core != null) {
-    q = [];
-    for(var k in params.core) {
-      q.push(".course.CORE-"+params.core[k]);
-    }
-    console.log(q.join(","));
-    var r = $(domTree).find(q.join(",")).detach();
-    $(domTree).empty().append(r);
-  }
-
-  // remove based on title key word
-  if (params.key != null) {
-    $(domTree).find(".course .title:not(:contains('"+(params.key+"").toLowerCase()+"'))").each(function(index) {
-      $(this).parent().remove();
-    });
-  }
-
-  return domTree;
+  return true;  
 }
 
 function applyFilters() {
@@ -515,12 +503,23 @@ function applyFilters() {
   //remove old CSS 
   $("#filters").remove();
   //add new CSS based on filters
+  //IMPORTANT this is critical for performance since it take full advantage of browser
+  //native dom node query capability. It only take less than 50ms.
   $("<style type='text/css' id='filters'> "+filters+",.course.hide"+ "{display:none;} </style>").appendTo("head");
 
-  //remove empty courses
+  //hide empty courses
+  hideEmptyCourse(filters);
+}
+
+function hideEmptyCourse(filters) {
+  // This is critical to use buildin css filter instead of jQuery :visible
+  // for huge performace gain
+  $(".section").removeClass("marker");
+  $(filters).addClass("marker");
+  $(".section").toggleClass("marker");
   $(".course").filter(function(){
-      return $(this).find(".section:visible").length == 0;
-  }).addClass("hide");
+      return $(this).find(".section.marker").length == 0;
+  }).addClass("hide");  
 }
 
 var template = "<label><input type='checkbox' data-filter='{filter-value}' checked /><span>{display-value}</span></label>";
@@ -565,12 +564,27 @@ function createCourse(c) {
 }
 
 function createSection(s) {
-  var labels = [], content = "", meetings = "";
+  var labels = [], content = "", meetings = "", oncampus=false, hybrid=false, online=false;
   for(var i=0; i<s.meetingTimes.length; i++) {
     var m = createMeeting(s.meetingTimes[i]);
     mergeFrom(labels, m.labels);
     meetings = meetings + "<li>"+m.content+"</li>";
+    //TODO move the server side
+    if (s.meetingTimes[i].meetingModeCode == '91') 
+      hybrid = true;
+    else if (s.meetingTimes[i].meetingModeCode == '90')
+      online = true;
+    else
+      oncampus = true;      
   }
+  type = "CT-ONCAMPUS";
+  if (!oncampus && !hybrid) {
+    type = "CT-ONLINE";
+  } else if (online || hybrid) {
+    type = "CT-HYBRID";
+  }
+  labels[type] = "";
+
   labels["OS-"+s.openStatus] = "";
   labels["CC-"+s.campusCode] = s.campusCode;
 
@@ -587,8 +601,17 @@ function createMeeting(m) {
   if (m.meetingDay == null) {
     content = "<span>Hours by Arrangement</span>";
   } else {
-    content = "<span>"+m.meetingDay+"  "+m.startTime+" - "+m.endTime+"</span>";
-    labels["MT-"+m.meetingDay+m.pmCode] = "";
+    //TODO do all logic on server side
+    var start = m.pmCode, end = m.pmCode;
+    if (Number(m.endTime.substring(0,2))==12) end = "P";
+    if (Number(m.startTime.substring(0,2))>7 && Number(m.startTime.substring(0,2))<12) start = "A";
+    content = "<span>"+m.meetingDay+"  "+m.startTime.substring(0,2)+":"+m.startTime.substring(2,4)+start+" - "+m.endTime.substring(0,2)+":"+m.endTime.substring(2,4)+end+"</span>";
+
+    if (Number(m.startTime.substring(0,2))>5 && m.pmCode=='P') {   
+      labels["MT-"+m.meetingDay+'N'] = "";
+    } else {
+      labels["MT-"+m.meetingDay+m.pmCode] = "";
+    }
   }
 
   if (m.campusAbbrev != null) {
@@ -606,6 +629,7 @@ function createMeeting(m) {
   } else {
     content += "<span></span>";
   }
+  //content += "<span>Mode: "+m.meetingModeCode+m.meetingModeDesc+"</span>";
 
   return {"labels":labels, "content":content};
 }
@@ -618,6 +642,13 @@ function parseQueryString() {
         if (queries[i[0]] == null) queries[i[0]] = [];
         queries[i[0]].push(i[1]);
     });
+
+    var level = [];
+    if (queries.level) {
+      if (queries.level.indexOf('U')>=0) level = level.concat(['0','100','200','300', '400']);
+      if (queries.level.indexOf('G')>=0) level = level.concat(['500','600','700','800']);
+      queries.level = level;
+    }
 
     console.log(queries);
     return queries;
