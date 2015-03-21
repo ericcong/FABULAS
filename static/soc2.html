@@ -382,7 +382,7 @@ function loadData() {
     parseData(data);
 
     //load first page
-    loadPage(0);
+    loadPage(0, true);
 
     // setup UI behaviors
     $(".title").click(function() {
@@ -394,7 +394,7 @@ function loadData() {
   });
 }
 
-function loadPage(i) {
+function loadPage(i, skipFilter) {
   $(".result").empty();
   pages[i].appendTo(".result");
 
@@ -419,7 +419,7 @@ function loadPage(i) {
   $("#subject-filters .multi-check").empty().append(
     createFilters(".course.", "SUB-", dynamicFilter, allSubjects));
 
-  applyFilters();
+  if (!skipFilter) applyFilters();
 
   if (expanded)
     $('.course').addClass("expanded");
