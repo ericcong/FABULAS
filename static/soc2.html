@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 
@@ -33,6 +32,13 @@
     width: calc(100% - 320px);
   }
 
+  #query-result .summary { margin-bottom: 0.25em; }
+
+  #query-result .summary .page { display: inline-block; border-radius: 5px; 
+    width: 3em; padding: 0.2em; padding-top: 0.3em; margin: 0 0 0.25em 1em;
+    background-color: MediumSeaGreen; text-align: center; color: white;
+  }
+  
   .course {
     width: 100%;
     height: 2em;
@@ -109,8 +115,15 @@
   }
 
 #subject-query { height: 9em; }
-#location-filters { height: 9em; }
+#key-query { display: none; }
+#core-query { display: none; height: 7em; }
+#location-filters { height: 7em; }
 #expand { width: 5em; text-align: center; }
+
+/* customize filters */
+#status-filters .multi-check label { width: 50%; }
+#status-filters .multi-check label:nth-of-type(2n) { padding-left: 2em;}
+#status-filters .multi-check label:nth-of-type(2n+1) { padding-right: 2em;}
 
 </style>
 
@@ -121,37 +134,59 @@
   <div id="courses">
     <div class="filters">
 
-      <form class="window" action="/static/soc2.html" id="key-query">
-        <div class="controls">
-          <span class="title">Choose Keyword</span>
-          <input type="submit" value="Submit" />          
-          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      <div class="tabs">
+        <div class="header">  
+          <span>Search: </span>
+          <label data-tab="#subject-query" onclick="$(this).parent().parent().find('.tab').hide(); $($(this).data('tab')).show();"><input type="radio" name="search" checked /><span>Subject</span></label>
+          <label data-tab="#key-query" onclick="$(this).parent().parent().find('.tab').hide(); $($(this).data('tab')).show();"><input type="radio" name="search" /><span>Keyword</span></label>
+          <label data-tab="#core-query" onclick="$(this).parent().parent().find('.tab').hide(); $($(this).data('tab')).show();"><input type="radio" name="search" /><span>Core Code</span></label>
         </div>
-        <div class="content">
-          <div>
-            <input type="text" name="key" class="key" placeholder="keyword" />
+        <form class="window tab" action="/static/soc2.html" id="subject-query">
+          <div class="controls">
+            <span class="title">Choose Subjects</span>
+            <input type="submit" value="Submit" />          
+            <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
           </div>
-        </div>
-      </form>
-
-      <form class="window" action="/static/soc2.html" id="subject-query">
-        <div class="controls">
-          <span class="title">Choose Subjects</span>
-          <input type="submit" value="Submit" />          
-          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
-        </div>
-        <div class="content">
-          <div class="multi-check">
-            <div class="controls">
-              <input type="text" class="keyword" onkeyup="filterCheckList(this)" />
-              <input type="checkbox" class="checkall" onclick="$(this).parent().parent().find('label input').prop('checked', $(this).prop('checked'));" />
+          <div class="content">
+            <div class="multi-check">
+              <div class="controls">
+                <input type="text" class="keyword" onkeyup="filterCheckList(this)" />
+                <input type="checkbox" class="checkall" onclick="$(this).parent().parent().find('label input').prop('checked', $(this).prop('checked'));" />
+              </div>
+              <!-- check list go here -->          
             </div>
-            <!-- check list go here -->          
           </div>
-        </div>
-      </form>
+        </form>        
 
-      <form class="window">
+        <form class="window tab" action="/static/soc2.html" id="key-query">
+          <div class="controls">
+            <span class="title">Choose Keyword</span>
+            <input type="submit" value="Submit" />          
+            <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+          </div>
+          <div class="content">
+            <div>
+              <input type="text" name="key" class="key" placeholder="keyword" />
+            </div>
+          </div>
+        </form>
+
+        <form class="window tab" action="/static/soc2.html" id="core-query">
+          <div class="controls">
+            <span class="title">Choose Core Code</span>
+            <input type="submit" value="Submit" />          
+            <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+          </div>
+          <div class="content">
+            <div class="multi-check">
+              <!-- check list go here -->          
+            </div>
+          </div>
+        </form>        
+
+      </div>
+
+      <form class="window" id="status-filters">
         <div class="controls">
           <span class="title">Status Filter</span>
           <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
@@ -219,7 +254,7 @@
           <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
         </div>
         <div class="content">
-          <div class="multi-check">
+          <div class="multi-check dynamic">
           </div>
         </div>
       </form>
@@ -231,7 +266,7 @@
           <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
         </div>
         <div class="content">
-          <div class="multi-check">
+          <div class="multi-check dynamic">
           </div>
         </div>
       </form>
@@ -243,7 +278,7 @@
           <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
         </div>
         <div class="content">
-          <div class="multi-check">
+          <div class="multi-check dynamic">
           </div>
         </div>
       </form>
@@ -278,25 +313,41 @@
 loadReferences();
 loadData(); 
 
-var subjectList = null;
+var allUnits = [], allSubjects = [];
 function loadReferences() {
   //TODO generalize it
   //TODO make sure data is sorted on server
-  if (subjectList == null) { 
-    $.getJSON( "/static/subjects.json.gz", function( data ) {
-      console.log("reference data loaded");
-      subjectList = data;
-      var s = "";
-      for (k in subjectList) {
-        s = s+"<label><input type='checkbox' name='subject' value='"+subjectList[k].code+"' /><span>"+
-          subjectList[k].code+" - "+subjectList[k].description.toLowerCase()+"</span></label>";
-      }
-      $("#subject-query .multi-check").append(s);
-    });
-  }
+  $.getJSON( "/static/references.json.gz", function( data ) {
+    console.log("reference data loaded");
+
+    // load subjects
+    var list = data.subjects;
+    var s = "";
+    for (k in list) {
+      s = s+"<label><input type='checkbox' name='subject' value='"+list[k].code+"' /><span>"+
+        list[k].code+" - "+list[k].description.toLowerCase()+"</span></label>";
+      allSubjects[list[k].code] = list[k].description.toLowerCase();  
+    }
+    $("#subject-query .multi-check").append(s);
+
+    // load core codes
+    list = data.coreCodes;
+    s = "";
+    for (k in list) {
+      s = s+"<label><input type='checkbox' name='core' value='"+list[k].code.toUpperCase()+"' /><span>"+
+        list[k].code.toUpperCase()+" - "+list[k].description.toLowerCase()+"</span></label>";
+    }
+    $("#core-query .multi-check").append(s);
+
+    // load unit codes
+    list = data.units;
+    for (k in list) {
+      allUnits[list[k].code] = list[k].description.toLowerCase();  
+    }
+    console.log(allUnits);
+  });
 }
 
-var allUnits=[], allSubjects=[], allLevels=[], allLocations=[]; allCampuses=[];
 function loadData() {
   // TODO: make sure json data with proper expiration header
   // load all courses
@@ -305,6 +356,9 @@ function loadData() {
 
     // parse data and generate dom nodes
     parseData(data);
+
+    //load first page
+    loadPage(0);
 
     // setup UI behaviors
     $(".title").click(function() {
@@ -319,15 +373,37 @@ function loadData() {
 function loadPage(i) {
   $(".result").empty();
   pages[i].appendTo(".result");
+
+  // get dynamic filter values from the live domTree
+  var dynamicFilter = [];
+  $(".section, .course").each(function( index ) {
+    var classes = $(this).attr("class").split(" ");
+    for (var i=1; i < classes.length; i++) {
+      dynamicFilter[classes[i]] = classes[i]; 
+    }
+  });
+
+  // insert filters based on what are in the search result domTree
+  console.log("create dynamic filters");
+
+  $("#location-filters .multi-check").empty().append(
+    createFilters(".section.", "LC-", dynamicFilter));
+  $("#level-filters .multi-check").empty().append(
+    createFilters(".course.", "LVL-", dynamicFilter));
+  $("#unit-filters .multi-check").empty().append(
+    createFilters(".course.", "OUC-", dynamicFilter, allUnits));
+  $("#subject-filters .multi-check").empty().append(
+    createFilters(".course.", "SUB-", dynamicFilter, allSubjects));
+
+  applyFilters();
+
+  if (expanded)
+    $('.course').addClass("expanded");
 }
 
-var pages = []; 
-var pagesize = 2000;
+var pages = [], pagesize = 2000;
 function parseData(data) {
   console.log("refreshing data");
-
-  // clear up filter labels
-  allUnits=[]; allSubjects=[]; allLevels=[]; allLocations=[]; allCampuses=[];  
   
   var courses = "";
   // create innerHTML for all courses from server feed
@@ -345,78 +421,79 @@ function parseData(data) {
 
   // insert search result domTree to page
   var numberOfCourses = data.children().length;
-  for (var i=0; i<Math.floor(numberOfCourses/pagesize); i++) {
+  for (var i=0; i<Math.floor(numberOfCourses/pagesize)+1; i++) {
     pages[i] = data.children().slice(0, pagesize).detach();
-    console.log("page "+i);
   }
-  $(".summary").append(numberOfCourses+" courses in "+pages.length+" pages"+"<a onclick='loadPage(2)'>2</a>");
-  loadPage(0);
-
-  //data.appendTo(".result");
-
-  // get all filter values from the final domTree
-  var afterQuery = [];
-  $(".course").each(function( index ) {
-    var classes = $(this).attr("class").split(" ");
-    for (var i=1; i < classes.length; i++) {
-      afterQuery[classes[i]] = classes[i]; 
+  $(".summary").append("Total "+numberOfCourses+" courses found.");
+  if (pages.length > 1) {
+    for (var i=0; i<pages.length; i++) {
+      $(".summary").append("<a class='page' onclick='loadPage("+i+")'>"+(i*pagesize)+"</a>");
     }
-  });
-  $(".section").each(function( index ) {
-    var classes = $(this).attr("class").split(" ");
-    for (var i=1; i < classes.length; i++) {
-      afterQuery[classes[i]] = classes[i]; 
-    }
-  });
-
-  // insert filters based on what are in the search result domTree
-  $(".dynamic-filters").empty();
-  $(createFilters(allLocations, ".section.", afterQuery)).appendTo("#location-filters .multi-check");
-  $(createFilters(allLevels, ".course.", afterQuery)).appendTo("#level-filters .multi-check");
-  $(createFilters(allUnits, ".course.", afterQuery)).appendTo("#unit-filters .multi-check");
-  $(createFilters(allSubjects, ".course.", afterQuery)).appendTo("#subject-filters .multi-check");
+  }
 }
 
 function applyQueries(params, domTree) {
-  var queries = [];
+  var q = [];
   if (params.level != null && params.level.length == 1) {
+    q = [];
     if ("G"==params.level[0]) {
-      queries.push(".course.LVL-0");
-      queries.push(".course.LVL-100");
-      queries.push(".course.LVL-200");
-      queries.push(".course.LVL-300");
-      queries.push(".course.LVL-400");
+      q.push(".course.LVL-500");
+      q.push(".course.LVL-600");
+      q.push(".course.LVL-700");
+      q.push(".course.LVL-800");
+
     }
     if ("U"==params.level[0]) {
-      queries.push(".course.LVL-500");
-      queries.push(".course.LVL-600");
-      queries.push(".course.LVL-700");
-      queries.push(".course.LVL-800");
+      q.push(".course.LVL-0");
+      q.push(".course.LVL-100");
+      q.push(".course.LVL-200");
+      q.push(".course.LVL-300");
+      q.push(".course.LVL-400");
     }
+    console.log(q.join(","));
+    var r = $(domTree).find(q.join(",")).detach();
+    $(domTree).empty().append(r);
   }
-  if (params.campus != null && params.campus.length > 0) {
-    for(var k in allCampuses) {
-      if (params.campus.indexOf(allCampuses[k]) < 0)
-        queries.push(".course."+k);
+
+  if (params.campus != null) {
+    q = [];
+    for(var k in params.campus) {
+      q.push(".course.CC-"+params.campus[k]);
     }
+    console.log(q.join(","));
+    var r = $(domTree).find(q.join(",")).detach();
+    $(domTree).empty().append(r);
   }
+
   if (params.school != null) {
-    for(var k in allUnits) {
-      if (params.school.indexOf(allUnits[k]) < 0)
-        queries.push(".course."+k);
+    q = [];
+    for(var k in params.school) {
+      q.push(".course.OUC-"+params.school[k]);
     }
+    console.log(q.join(","));
+    var r = $(domTree).find(q.join(",")).detach();
+    $(domTree).empty().append(r);
   }
+
   if (params.subject != null) {
-    for(var k in allSubjects) {
-      if (params.subject.indexOf(allSubjects[k]) < 0)
-        queries.push(".course."+k);
+    q = [];
+    for(var k in params.subject) {
+      q.push(".course.SUB-"+params.subject[k]);
     }
+    console.log(q.join(","));
+    var r = $(domTree).find(q.join(",")).detach();
+    $(domTree).empty().append(r);
   }
 
-  console.log(queries);
-
-  // remove based on query
-  $(domTree).find(queries.join(",")).remove();
+  if (params.core != null) {
+    q = [];
+    for(var k in params.core) {
+      q.push(".course.CORE-"+params.core[k]);
+    }
+    console.log(q.join(","));
+    var r = $(domTree).find(q.join(",")).detach();
+    $(domTree).empty().append(r);
+  }
 
   // remove based on title key word
   if (params.key != null) {
@@ -424,14 +501,6 @@ function applyQueries(params, domTree) {
       $(this).parent().remove();
     });
   }
-  // Use CSS to hide courses based on query
-  // TODO we can remove them from DOM tree before insert into page
-  // $("<style type='text/css' id='queries'> "+queries.join(",")+",.course.hide"+"{display:none;} </style>").appendTo("head");
-
-  // Remove empty course
-  // $(".course").filter(function(){
-  //     return $(this).find(".section:visible").length == 0;
-  // }).addClass("hide");
 
   return domTree;
 }
@@ -445,38 +514,37 @@ function applyFilters() {
 
   //remove old CSS 
   $("#filters").remove();
+  //add new CSS based on filters
   $("<style type='text/css' id='filters'> "+filters+",.course.hide"+ "{display:none;} </style>").appendTo("head");
 
+  //remove empty courses
   $(".course").filter(function(){
       return $(this).find(".section:visible").length == 0;
   }).addClass("hide");
 }
 
 var template = "<label><input type='checkbox' data-filter='{filter-value}' checked /><span>{display-value}</span></label>";
-
-function createFilters(filter, prefix, afterQuery) {
-  var sorted = Object.keys(filter).sort();
-  var s = "";
+function createFilters(filter, prefix, dynamicFilter, reference) {
+  var s="", sorted = Object.keys(dynamicFilter).sort();
   for(var k in sorted) {
-    try {
-      if (afterQuery[sorted[k]]!=null)
-        s = s + template.replace("{filter-value}", prefix+sorted[k]).replace("{display-value}", filter[sorted[k]]);
-    } catch(err) { /* means not in the array */ }
+    if (dynamicFilter[sorted[k]].indexOf(prefix)==0) {
+      var displayValue = dynamicFilter[sorted[k]].replace(prefix, "");
+      try { displayValue = displayValue+" - "+reference[displayValue]; } catch(err) { }
+      s = s + template.replace("{filter-value}", filter+dynamicFilter[sorted[k]]).replace("{display-value}", displayValue);
+    }
   }
   return s;
 }
 
 function createCourse(c) {
   var labels = [];
+  if (c.coreCodes.length > 0) {
+    for(var k in c.coreCodes)
+      labels.push("CORE-"+c.coreCodes[k].code.toUpperCase());
+  }
   labels.push("OUC-"+c.offeringUnitCode);
-  allUnits["OUC-"+c.offeringUnitCode] = c.offeringUnitCode;
-
   labels.push("SUB-"+c.subject);
-  allSubjects["SUB-"+c.subject] = c.subject;
-
   labels.push("LVL-" + ((Number(c.courseNumber)-Number(c.courseNumber)%100)) );
-  allLevels["LVL-"+((Number(c.courseNumber)-Number(c.courseNumber)%100))] = ((Number(c.courseNumber)-Number(c.courseNumber)%100));
-
   labels.push("CC-"+c.campusCode);
 
   var sections = "";
@@ -497,9 +565,7 @@ function createCourse(c) {
 }
 
 function createSection(s) {
-  var labels = [];
-  var content = ""
-  var meetings = "";
+  var labels = [], content = "", meetings = "";
   for(var i=0; i<s.meetingTimes.length; i++) {
     var m = createMeeting(s.meetingTimes[i]);
     mergeFrom(labels, m.labels);
@@ -507,7 +573,6 @@ function createSection(s) {
   }
   labels["OS-"+s.openStatus] = "";
   labels["CC-"+s.campusCode] = s.campusCode;
-  allCampuses["CC-"+s.campusCode] = s.campusCode;
 
   content = "<div class='section "+keys(labels).join(" ")+"'>"+
     "<span>"+s.number+"</span>"+"<span>"+s.index+"</span>"+
@@ -518,8 +583,7 @@ function createSection(s) {
 }
 
 function createMeeting(m) {
-  var labels = [];
-  var content = "";
+  var labels = [], content = "";
   if (m.meetingDay == null) {
     content = "<span>Hours by Arrangement</span>";
   } else {
@@ -533,7 +597,6 @@ function createMeeting(m) {
     var cc = m.campusAbbrev.replace("/", "N").replace("**", "");
     if (cc.length > 0) {
       labels["LC-"+cc] = cc;
-      allLocations["LC-"+cc] = cc;
     }
   } else {
     content += "<span></span>";

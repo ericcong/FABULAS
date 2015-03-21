@@ -1,5 +1,12 @@
 * {margin:0; padding:0; box-sizing: border-box;}
 
+/* *************** Tab CSS ****************** */
+.tabs { width: 100%; }
+.tabs > .header > label > input { display: none; }
+.tabs > .header > label > input:checked + span { border-bottom: 2px solid steelblue; }
+.tabs > .header > label > span { display: inline-block; padding: 0.2em; }
+.tabs > .header  { margin-bottom: 0.5em; }
+
 /* *************** Window CSS ****************** */
 .window { width: 100%; min-height: 2em; margin: 0 0 0.5em 0;
   border: 1px solid #999999; border-radius: 5px; 
