@@ -2,691 +2,217 @@
 <html>
 
 <head>
-
   <meta charset="UTF-8">
-
   <title>SOC jQuery</title>
-
   <style>
-  @import url("/static/ui.css");
-
-  .page {
-    padding: 0.5em;
-  }
-
-  .filters {
-    display: inline-block;
-    width: 320px;
-    vertical-align: top;
-    margin-right: -4px;
-    padding-right: 0.5em;
-  }
-  .filters table { width: 100%; }
-  .filters td { width: 1.4em; text-align: center; }
-  .filters tr > td:first-child { text-align: left; }
-  .key { width: 100%; display: block; font-size: 100%; }
-
-  #query-result {
-    display: inline-block;
-    vertical-align: top;
-    width: calc(100% - 320px);
-  }
-
-  #query-result .summary { margin-bottom: 0.25em; }
-
-  #query-result .summary .page { display: inline-block; border-radius: 5px; 
-    width: 3em; padding: 0.2em; padding-top: 0.3em; margin: 0 0 0.25em 1em;
-    background-color: MediumSeaGreen; text-align: center; color: white; text-decoration: none;
-  }
-  
-  .course {
-    width: 100%;
-    height: 2em;
-    overflow: hidden;
-    border: 1px solid grey;
-    border-width: 1px 1px 0px 1px;
-  }
-
-  .course.expanded {
-    height: auto;  
-  }
-
-  .course > .title {
-    background-color: lightgrey;
-    padding: 0.5em;
-    width: 100%;
-  }
-
-  .course > .title > .short-desc {
-    text-transform: uppercase;
-  }
-
-  .course > .header {
-    padding: 0.5em;
-  }
-  .course > .title > span:nth-of-type(1):after {
-    content: ":";
-  }
-  .course > .title > span:nth-of-type(2):after {
-    content: ":";
-  }
-  .course > .title > span:nth-of-type(3) {
-    display: inline-block;
-    margin-right: 2em;
-  }
-
-  .course > .section {
-    padding: 0.5em;
-    border-bottom: 1px solid lightgrey;
-  }
-
-  .course > .section.OS-false > span:nth-of-type(1) {
-    background-color: red;
-  }
-  .course > .section.OS-true > span:nth-of-type(1) {
-    background-color: green;
-  }
-  .course > .section > span:nth-of-type(1) {
-    display: inline-block;
-    padding: 0.4em 0 0.2em 0;
-    width: 2em;
-    margin-right: 1em;
-    text-align: center;
-    color: white;
-  }
-
-  .course > .section > ul {
-    display: inline-block;
-    list-style-type: none;
-    margin-left: 1em;
-    vertical-align: middle;
-  }
-
-  .course > .section > ul > li > span:nth-of-type(1) {
-    display: inline-block;
-    margin-right: 2em;
-    width: 10em;
-    text-align: right;
-  }
-  .course > .section > ul > li > span:nth-of-type(2) {
-    display: inline-block;
-    width: 3em;
-    margin-right: 1em;
-  }
-
-#subject-query { height: 9em; }
-#key-query { display: none; }
-#core-query { display: none; height: 7em; }
-#location-filters { height: 7em; }
-#expand { width: 5em; text-align: center; }
-
-/* customize filters */
-#status-filters .multi-check label { width: 50%; }
-#status-filters .multi-check label:nth-of-type(2n) { padding-left: 2em;}
-#status-filters .multi-check label:nth-of-type(2n+1) { padding-right: 2em;}
-
-</style>
-
+    @import url("/static/ui.css");
+    @import url("/static/soc.css");
+  </style>
 </head>
 
 <body>
-<div id="subjects" class="page">
-  <div id="courses">
-    <div class="filters">
-
-      <div class="tabs">
-        <div class="header">  
-          <span>Search: </span>
-          <label data-tab="#subject-query" onclick="$(this).parent().parent().find('.tab').hide(); $($(this).data('tab')).show();"><input type="radio" name="search" checked /><span>Subject</span></label>
-          <label data-tab="#key-query" onclick="$(this).parent().parent().find('.tab').hide(); $($(this).data('tab')).show();"><input type="radio" name="search" /><span>Keyword</span></label>
-          <label data-tab="#core-query" onclick="$(this).parent().parent().find('.tab').hide(); $($(this).data('tab')).show();"><input type="radio" name="search" /><span>Core Code</span></label>
-        </div>
-        <form class="window tab" action="/static/soc.html" id="subject-query">
-          <input type="hidden" name="semester" value="92015" /> 
-          <div class="controls">
-            <span class="title">Choose Subjects</span>
-            <input type="submit" value="Submit" />          
-            <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
-          </div>
-          <div class="content">
-            <div class="multi-check">
-              <div class="controls">
-                <input type="text" class="keyword" onkeyup="filterCheckList(this)" />
-                <input type="checkbox" class="checkall" onclick="$(this).parent().parent().find('label input').prop('checked', $(this).prop('checked'));" />
-              </div>
-              <!-- check list go here -->          
-            </div>
-          </div>
-        </form>        
-
-        <form class="window tab" action="/static/soc.html" id="key-query">
-          <input type="hidden" name="semester" value="92015" /> 
-          <div class="controls">
-            <span class="title">Choose Keyword</span>
-            <input type="submit" value="Submit" />          
-            <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
-          </div>
-          <div class="content">
-            <div>
-              <input type="text" name="key" class="key" placeholder="keyword" />
-            </div>
-          </div>
-        </form>
-
-        <form class="window tab" action="/static/soc.html" id="core-query">
-          <input type="hidden" name="semester" value="92015" /> 
-          <div class="controls">
-            <span class="title">Choose Core Code</span>
-            <input type="submit" value="Submit" />          
-            <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
-          </div>
-          <div class="content">
-            <div class="multi-check">
-              <!-- check list go here -->          
-            </div>
-          </div>
-        </form>        
-
+  <!-- all filters in this pane -->
+  <div class="filters">
+    <!-- search tab -->
+    <div class="tabs">
+      <div class="header">  
+        <span>Search: </span>
+        <label data-tab="#subject-query" onclick="$(this).parent().parent().find('.tab').hide(); $($(this).data('tab')).show();"><input type="radio" name="search" checked /><span>Subject</span></label>
+        <label data-tab="#key-query" onclick="$(this).parent().parent().find('.tab').hide(); $($(this).data('tab')).show();"><input type="radio" name="search" /><span>Keyword</span></label>
+        <label data-tab="#core-query" onclick="$(this).parent().parent().find('.tab').hide(); $($(this).data('tab')).show();"><input type="radio" name="search" /><span>Core Code</span></label>
       </div>
-
-      <form class="window" id="status-filters">
+      <!-- subject search tab -->
+      <form class="window tab" action="/static/soc.html" id="subject-query">
+        <input type="hidden" name="semester" value="92015" /> 
         <div class="controls">
-          <span class="title">Status Filter</span>
-          <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+          <span class="title">Choose Subjects</span>
+          <input type="submit" value="Submit" />          
           <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
         </div>
         <div class="content">
           <div class="multi-check">
-            <label><input type="checkbox" data-filter=".section.OS-true" checked /><span>Open</span></label>
-            <label><input type="checkbox" data-filter=".section.OS-false" checked /><span>Close</span></label>
+            <div class="controls">
+              <input type="text" class="keyword" onkeyup="filterCheckList(this)" />
+              <input type="checkbox" class="checkall" onclick="$(this).parent().parent().find('label input').prop('checked', $(this).prop('checked'));" />
+            </div>
+            <!-- check list go here -->          
+          </div>
+        </div>
+      </form>        
+      <!-- keyword search tab -->
+      <form class="window tab" action="/static/soc.html" id="key-query">
+        <input type="hidden" name="semester" value="92015" /> 
+        <div class="controls">
+          <span class="title">Choose Keyword</span>
+          <input type="submit" value="Submit" />          
+          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+        </div>
+        <div class="content">
+          <div>
+            <input type="text" name="key" class="key" placeholder="keyword" />
           </div>
         </div>
       </form>
-
-      <form class="window">
+      <!-- core code search tab -->
+      <form class="window tab" action="/static/soc.html" id="core-query">
+        <input type="hidden" name="semester" value="92015" /> 
         <div class="controls">
-          <span class="title">Type Filter</span>
-          <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+          <span class="title">Choose Core Code</span>
+          <input type="submit" value="Submit" />          
           <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
         </div>
         <div class="content">
           <div class="multi-check">
-            <label><input type="checkbox" data-filter=".section.CT-ONCAMPUS" checked /><span>Traditional</span></label>
-            <label><input type="checkbox" data-filter=".section.CT-ONLINE" checked /><span>Online</span></label>
-            <label><input type="checkbox" data-filter=".section.CT-HYBRID" checked /><span>Hybrid</span></label>
+            <!-- check list go here -->          
           </div>
         </div>
-      </form>
-
-      <form class="window">
-        <div class="controls">
-          <span class="title">Day/Time Filter</span>
-          <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
-          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
-        </div>
-        <div class="content">
-          <table>
-            <tr>
-              <td></td><td>M</td><td>T</td><td>W</td><td>Th</td><td>F</td><td>S</td><td>SU</td>
-            </tr>
-            <tr>
-              <td>Morning</td>
-              <td><input type="checkbox" data-filter=".section.MT-MA" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-TA" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-WA" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-THA" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-FA" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-SA" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-SUA" checked /></td>
-            </tr>
-            <tr>
-              <td>Afteroon</td>
-              <td><input type="checkbox" data-filter=".section.MT-MP" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-TP" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-WP" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-THP" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-FP" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-SP" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-SUP" checked /></td>
-            </tr>
-            <tr>
-              <td>Evening</td>
-              <td><input type="checkbox" data-filter=".section.MT-MN" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-TN" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-WN" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-THN" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-FN" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-SN" checked /></td>
-              <td><input type="checkbox" data-filter=".section.MT-SUN" checked /></td>
-            </tr>
-          </table>
-        </div>
-      </form>
-
-      <form class="window" id="location-filters">
-        <div class="controls">
-          <span class="title">Location Filter</span>
-          <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
-          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
-        </div>
-        <div class="content">
-          <div class="multi-check">
-          </div>
-        </div>
-      </form>
-
-      <form class="window min" id="level-filters">
-        <div class="controls">
-          <span class="title">Level Filter</span>
-          <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
-          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
-        </div>
-        <div class="content">
-          <div class="multi-check dynamic">
-          </div>
-        </div>
-      </form>
-
-      <form class="window min" id="unit-filters">
-        <div class="controls">
-          <span class="title">Unit Filter</span>
-          <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
-          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
-        </div>
-        <div class="content">
-          <div class="multi-check dynamic">
-          </div>
-        </div>
-      </form>
-
-      <form class="window min" id="subject-filters">
-        <div class="controls">
-          <span class="title">Subject Filter</span>
-          <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
-          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
-        </div>
-        <div class="content">
-          <div class="multi-check dynamic">
-          </div>
-        </div>
-      </form>
+      </form>        
     </div>
-    <!-- End of Filters Pane -->
+    <!-- end of search tab -->
 
-      <form class="window" id="query-result">
-        <div class="controls">
-          <span class="title">Query Result</span><span id="expand" class="title">+</span>
-          <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
-          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+    <!-- list of filters -->
+    <!-- status filter -->
+    <form class="window" id="status-filters">
+      <div class="controls">
+        <span class="title">Status Filter</span>
+        <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+        <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      </div>
+      <div class="content">
+        <div class="multi-check">
+          <label><input type="checkbox" data-filter=".section.OS-true" checked /><span>Open</span></label>
+          <label><input type="checkbox" data-filter=".section.OS-false" checked /><span>Close</span></label>
         </div>
-        <div class="content">
-          <div class="summary"></div>
-          <div class="result"></div>
-          <a href="https://github.com/tevjef/Rutgers-Course-Tracker/blob/master/response-samples/courses-nk-nb.json">sample data</a>
+      </div>
+    </form>
+    <!-- course section online or hybrid type filter -->
+    <form class="window">
+      <div class="controls">
+        <span class="title">Type Filter</span>
+        <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+        <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      </div>
+      <div class="content">
+        <div class="multi-check">
+          <label><input type="checkbox" data-filter=".section.CT-ONCAMPUS" checked /><span>Traditional</span></label>
+          <label><input type="checkbox" data-filter=".section.CT-ONLINE" checked /><span>Online</span></label>
+          <label><input type="checkbox" data-filter=".section.CT-HYBRID" checked /><span>Hybrid</span></label>
         </div>
-      </form>
-    </div>
-    <!-- End of Result Pane -->
+      </div>
+    </form>
+    <!-- date time filter -->
+    <form class="window">
+      <div class="controls">
+        <span class="title">Day/Time Filter</span>
+        <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+        <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      </div>
+      <div class="content">
+        <table>
+          <tr>
+            <td></td><td>M</td><td>T</td><td>W</td><td>Th</td><td>F</td><td>S</td><td>SU</td>
+          </tr>
+          <tr>
+            <td>Morning</td>
+            <td><input type="checkbox" data-filter=".section.MT-MA" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-TA" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-WA" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-THA" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-FA" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-SA" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-SUA" checked /></td>
+          </tr>
+          <tr>
+            <td>Afteroon</td>
+            <td><input type="checkbox" data-filter=".section.MT-MP" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-TP" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-WP" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-THP" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-FP" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-SP" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-SUP" checked /></td>
+          </tr>
+          <tr>
+            <td>Evening</td>
+            <td><input type="checkbox" data-filter=".section.MT-MN" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-TN" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-WN" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-THN" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-FN" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-SN" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-SUN" checked /></td>
+          </tr>
+        </table>
+      </div>
+    </form>
+    <!-- meeting location filter -->
+    <form class="window" id="location-filters">
+      <div class="controls">
+        <span class="title">Location Filter</span>
+        <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+        <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      </div>
+      <div class="content">
+        <div class="multi-check">
+        </div>
+      </div>
+    </form>
+    <!-- course level filter -->
+    <form class="window min" id="level-filters">
+      <div class="controls">
+        <span class="title">Level Filter</span>
+        <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+        <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      </div>
+      <div class="content">
+        <div class="multi-check dynamic">
+        </div>
+      </div>
+    </form>
+    <!-- offfering unit or school filter -->
+    <form class="window min" id="unit-filters">
+      <div class="controls">
+        <span class="title">Unit Filter</span>
+        <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+        <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      </div>
+      <div class="content">
+        <div class="multi-check dynamic">
+        </div>
+      </div>
+    </form>
+    <!-- course subject filter -->
+    <form class="window min" id="subject-filters">
+      <div class="controls">
+        <span class="title">Subject Filter</span>
+        <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+        <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      </div>
+      <div class="content">
+        <div class="multi-check dynamic">
+        </div>
+      </div>
+    </form>
   </div>
-  <!-- End of Courses -->
-</div>
+  <!-- End of Filters Pane -->
 
-</div>
+  <!-- window for search result courses -->
+  <form class="window" id="query-result">
+    <div class="controls">
+      <span class="title">Query Result</span><span id="expand" class="title">+</span>
+      <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+      <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+    </div>
+    <div class="content">
+      <div class="summary"></div>
+      <div class="result"></div>
+      <a href="https://github.com/tevjef/Rutgers-Course-Tracker/blob/master/response-samples/courses-nk-nb.json">sample data</a>
+    </div>
+  </form>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script src="/static/ui.js"></script>
-
-<script>
-
-var params = parseQueryString();
-var expanded = false;
-
-loadReferences();
-loadData(); 
-
-var allUnits = [], allSubjects = [];
-function loadReferences() {
-  //TODO generalize it
-  //TODO make sure data is sorted on server
-  $.getJSON( "/static/references.json.gz", function( data ) {
-    console.log("reference data loaded");
-
-    // load subjects
-    var list = data.subjects;
-    var s = "";
-    for (k in list) {
-      s = s+"<label><input type='checkbox' name='subject' value='"+list[k].code+"' /><span>"+
-        list[k].code+" - "+list[k].description.toLowerCase()+"</span></label>";
-      allSubjects[list[k].code] = list[k].description.toLowerCase();  
-    }
-    $("#subject-query .multi-check").append(s);
-
-    // load core codes
-    list = data.coreCodes;
-    s = "";
-    for (k in list) {
-      s = s+"<label><input type='checkbox' name='core' value='"+list[k].code.toUpperCase()+"' /><span>"+
-        list[k].code.toUpperCase()+" - "+list[k].description.toLowerCase()+"</span></label>";
-    }
-    $("#core-query .multi-check").append(s);
-
-    // load unit codes
-    list = data.units;
-    for (k in list) {
-      allUnits[list[k].code] = list[k].description.toLowerCase();  
-    }
-  });
-}
-
-function loadData() {
-  // TODO: make sure json data with proper expiration header
-  // load all courses
-  var courseURL = "";
-  if (params.semester) 
-    courseURL = "/static/"+params.semester[0]+"courses.json.gz";
-  else
-    window.location.replace("/static/sochome.html");
-
-  $.getJSON(courseURL, function( data) {
-    console.log("course data loaded");
-
-    // parse data and generate dom nodes
-    parseData(data);
-
-    //load first page
-    loadPage(0, true);
-
-    // setup UI behaviors
-    $(".title").click(function() {
-      $(this).parent().toggleClass("expanded");
-    });
-    $("[data-filter]").click(function() {
-      applyFilters();
-    });
-  });
-}
-
-function loadPage(i, skipFilter) {
-  $(".result").empty();
-  pages[i].appendTo(".result");
-
-  // get dynamic filter values from the live domTree
-  var dynamicFilter = [];
-  $(".section, .course").each(function( index ) {
-    var classes = $(this).attr("class").split(" ");
-    for (var i=1; i < classes.length; i++) {
-      dynamicFilter[classes[i]] = classes[i]; 
-    }
-  });
-
-  // insert filters based on what are in the search result domTree
-  console.log("create dynamic filters");
-
-  $("#location-filters .multi-check").empty().append(
-    createFilters(".section.", "LC-", dynamicFilter));
-  $("#level-filters .multi-check").empty().append(
-    createFilters(".course.", "LVL-", dynamicFilter));
-  $("#unit-filters .multi-check").empty().append(
-    createFilters(".course.", "OUC-", dynamicFilter, allUnits));
-  $("#subject-filters .multi-check").empty().append(
-    createFilters(".course.", "SUB-", dynamicFilter, allSubjects));
-
-  if (!skipFilter) applyFilters();
-
-  if (expanded)
-    $('.course').addClass("expanded");
-}
-
-var pages = [], pagesize = 2000;
-function parseData(data) {
-  console.log("refreshing data");
-  
-  var courses = "";
-  // create innerHTML for all courses after query from server feed
-  for(var i=0; i<data.length; i++) {
-    // format data use data as-is amap or format on server and assign class
-    // query the json object before creating dom node
-    if (query(data[i]))
-      courses = courses + createCourse(data[i]);
-  }
-  courses = "<div class='data'>"+courses+"</div>";
-
-  // create domTree with all courses from server feed
-  var data = $(courses);
-
-  // insert search result domTree to page
-  var numberOfCourses = data.children().length;
-  for (var i=0; i<Math.floor(numberOfCourses/pagesize)+1; i++) {
-    pages[i] = data.children().slice(0, pagesize).detach();
-  }
-  // create summary info of search result 
-  $(".summary").append("Total "+numberOfCourses+" courses found.");
-  if (pages.length > 1) {
-    for (var i=0; i<pages.length; i++) {
-      $(".summary").append("<a href='' class='page' onclick='loadPage("+i+")'>"+(i*pagesize)+"</a>");
-    }
-  }
-}
-
-function query(course) {
-  try { // query campus code
-    if (params.campus && params.campus.indexOf(course.campusCode)<0) return false;
-  } catch(err) {}
-  try { // query school code
-    if (params.school && params.school.indexOf(course.offeringUnitCode)<0) return false;
-  } catch(err) {}
-  try { // query subject code
-    if (params.subject && params.subject.indexOf(course.subject)<0) return false;
-  } catch(err) {}
-  try { // query core code
-    if (params.core) {
-      var found = false;
-      for(var k in course.coreCodes) {
-        if (params.core.indexOf(course.coreCodes[k].code.toUpperCase())>=0) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) return false;
-    }
-  } catch(err) {}
-  try { // query level code
-    if (params.level && params.level.indexOf(
-      ""+((Number(course.courseNumber)-Number(course.courseNumber)%100)))<0) return false;
-  } catch(err) {}
-  try { // query keyword
-    if (params.key) {
-      if (course.title.toLowerCase().indexOf(params.key)<0 &&
-          course.title.toLowerCase().indexOf(params.key)<0
-      ) return false;
-    }
-  } catch(err) {}
-
-  return true;  
-}
-
-function applyFilters() {
-  var filters = $("[data-filter]:not(:checked)").map(function() {
-    return $(this).data("filter");
-  }).get().join(',');
-
-  $(".course").removeClass("hide");
-
-  //remove old CSS 
-  $("#filters").remove();
-  //add new CSS based on filters
-  //IMPORTANT this is critical for performance since it take full advantage of browser
-  //native dom node query capability. It only take less than 50ms.
-  $("<style type='text/css' id='filters'> "+filters+",.course.hide"+ "{display:none;} </style>").appendTo("head");
-
-  //hide empty courses
-  hideEmptyCourse(filters);
-}
-
-function hideEmptyCourse(filters) {
-  // This is critical to use buildin css filter instead of jQuery :visible
-  // for huge performace gain
-  $(".section").removeClass("marker");
-  $(filters).addClass("marker");
-  $(".section").toggleClass("marker");
-  $(".course").filter(function(){
-      return $(this).find(".section.marker").length == 0;
-  }).addClass("hide");  
-}
-
-var template = "<label><input type='checkbox' data-filter='{filter-value}' checked /><span>{display-value}</span></label>";
-function createFilters(filter, prefix, dynamicFilter, reference) {
-  var s="", sorted = Object.keys(dynamicFilter).sort();
-  for(var k in sorted) {
-    if (dynamicFilter[sorted[k]].indexOf(prefix)==0) {
-      var displayValue = dynamicFilter[sorted[k]].replace(prefix, "");
-      try { displayValue = displayValue+" - "+reference[displayValue]; } catch(err) { }
-      s = s + template.replace("{filter-value}", filter+dynamicFilter[sorted[k]]).replace("{display-value}", displayValue);
-    }
-  }
-  return s;
-}
-
-function createCourse(c) {
-  var labels = [];
-  if (c.coreCodes.length > 0) {
-    for(var k in c.coreCodes)
-      labels.push("CORE-"+c.coreCodes[k].code.toUpperCase());
-  }
-  labels.push("OUC-"+c.offeringUnitCode);
-  labels.push("SUB-"+c.subject);
-  labels.push("LVL-" + ((Number(c.courseNumber)-Number(c.courseNumber)%100)) );
-  labels.push("CC-"+c.campusCode);
-
-  var sections = "";
-  for(var i=0; i<c.sections.length; i++) {
-    var s = createSection(c.sections[i]);
-    sections = sections + s.content;
-  }
-
-  var content = "<div class='course "+labels.join(" ")+"'>"+"<div class='title'>"+
-    "<span>"+c.offeringUnitCode+"</span>"+
-    "<span>"+c.subject+"</span>"+
-    "<span>"+c.courseNumber+"</span>"+
-    "<span class='short-desc'>"+c.title.toLowerCase()+"</span>"+"</div>"+
-    sections+
-    "</div>";
-
-  return content;
-}
-
-function createSection(s) {
-  var labels = [], content = "", meetings = "", oncampus=false, hybrid=false, online=false;
-  for(var i=0; i<s.meetingTimes.length; i++) {
-    var m = createMeeting(s.meetingTimes[i]);
-    mergeFrom(labels, m.labels);
-    meetings = meetings + "<li>"+m.content+"</li>";
-    //TODO move the server side
-    if (s.meetingTimes[i].meetingModeCode == '91') 
-      hybrid = true;
-    else if (s.meetingTimes[i].meetingModeCode == '90')
-      online = true;
-    else
-      oncampus = true;      
-  }
-  type = "CT-ONCAMPUS";
-  if (!oncampus && !hybrid) {
-    type = "CT-ONLINE";
-  } else if (online || hybrid) {
-    type = "CT-HYBRID";
-  }
-  labels[type] = "";
-
-  labels["OS-"+s.openStatus] = "";
-  labels["CC-"+s.campusCode] = s.campusCode;
-
-  content = "<div class='section "+keys(labels).join(" ")+"'>"+
-    "<span>"+s.number+"</span>"+"<span>"+s.index+"</span>"+
-    "<ul>"+meetings+"</ul>"+
-    "</div>";
-
-  return {"labels":labels, "content":content};
-}
-
-function createMeeting(m) {
-  var labels = [], content = "";
-  if (m.meetingDay == null) {
-    content = "<span>Hours by Arrangement</span>";
-  } else {
-    //TODO do all logic on server side
-    var start = m.pmCode, end = m.pmCode;
-    if (Number(m.endTime.substring(0,2))==12) end = "P";
-    if (Number(m.startTime.substring(0,2))>7 && Number(m.startTime.substring(0,2))<12) start = "A";
-    content = "<span>"+m.meetingDay+"  "+m.startTime.substring(0,2)+":"+m.startTime.substring(2,4)+start+" - "+m.endTime.substring(0,2)+":"+m.endTime.substring(2,4)+end+"</span>";
-
-    if (Number(m.startTime.substring(0,2))>5 && m.pmCode=='P') {   
-      labels["MT-"+m.meetingDay+'N'] = "";
-    } else {
-      labels["MT-"+m.meetingDay+m.pmCode] = "";
-    }
-  }
-
-  if (m.campusAbbrev != null) {
-    content += "<span>"+m.campusAbbrev+"</span>";
-    //TODO fix d/c, **, other invalid character etc
-    var cc = m.campusAbbrev.replace("/", "N").replace("**", "");
-    if (cc.length > 0) {
-      labels["LC-"+cc] = cc;
-    }
-  } else {
-    content += "<span></span>";
-  }
-  if (m.buildingCode != null) {
-    content += "<span>"+m.buildingCode+"-"+m.roomNumber+"</span>";
-  } else {
-    content += "<span></span>";
-  }
-  //content += "<span>Mode: "+m.meetingModeCode+m.meetingModeDesc+"</span>";
-
-  return {"labels":labels, "content":content};
-}
-
-function parseQueryString() {
-    var queries = {};
-    $.each(decodeURIComponent(document.location.search).substr(1).split('&'), function(c,q){
-        var i = q.split('=');
-        if (queries[i[0]] == null) queries[i[0]] = [];
-        queries[i[0]].push(i[1]);
-    });
-
-    var level = [];
-    if (queries.level) {
-      if (queries.level.indexOf('U')>=0) level = level.concat(['0','100','200','300', '400']);
-      if (queries.level.indexOf('G')>=0) level = level.concat(['500','600','700','800']);
-      queries.level = level;
-    }
-
-    if (queries.semester) { $("input[name='semester']").val(queries.semester[0]); }
-    console.log(queries);
-    return queries;
-}
-
-$("#expand").click(function() {
-  if (expanded) {
-    $('.course').removeClass("expanded");
-  }
-  else {
-    $('.course').addClass("expanded");
-  }
-  expanded = !expanded;
-});
-
-function keys(o) {
-  var keys = [];
-  for(k in o) keys.push(k);
-  return keys;
-}
-
-function mergeFrom(o1, o2) {
-  for (var attr in o2) { o1[attr] = o2[attr]; }
-}
-
-</script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="/static/ui.js"></script>
+  <script src="/static/soc.js"></script>
 
 </body>
 

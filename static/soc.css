@@ -1,0 +1,114 @@
+.page {
+  padding: 0.5em;
+}
+
+.filters {
+  display: inline-block;
+  width: 320px;
+  vertical-align: top;
+  margin-right: -4px;
+  padding-right: 0.5em;
+}
+.filters table { width: 100%; }
+.filters td { width: 1.4em; text-align: center; }
+.filters tr > td:first-child { text-align: left; }
+.key { width: 100%; display: block; font-size: 100%; }
+
+#query-result {
+  display: inline-block;
+  vertical-align: top;
+  width: calc(100% - 320px);
+}
+
+#query-result .summary { margin-bottom: 0.25em; }
+
+#query-result .summary .page { display: inline-block; border-radius: 5px; 
+  width: 3em; padding: 0.2em; padding-top: 0.3em; margin: 0 0 0.25em 1em;
+  background-color: MediumSeaGreen; text-align: center; color: white; text-decoration: none;
+}
+
+.course {
+  width: 100%;
+  height: 2em;
+  overflow: hidden;
+  border: 1px solid grey;
+  border-width: 1px 1px 0px 1px;
+}
+
+.course.expanded {
+  height: auto;  
+}
+
+.course > .title {
+  background-color: lightgrey;
+  padding: 0.5em;
+  width: 100%;
+}
+
+.course > .title > .short-desc {
+  text-transform: uppercase;
+}
+
+.course > .header {
+  padding: 0.5em;
+}
+.course > .title > span:nth-of-type(1):after {
+  content: ":";
+}
+.course > .title > span:nth-of-type(2):after {
+  content: ":";
+}
+.course > .title > span:nth-of-type(3) {
+  display: inline-block;
+  margin-right: 2em;
+}
+
+.course > .section {
+  padding: 0.5em;
+  border-bottom: 1px solid lightgrey;
+}
+
+.course > .section.OS-false > span:nth-of-type(1) {
+  background-color: red;
+}
+.course > .section.OS-true > span:nth-of-type(1) {
+  background-color: green;
+}
+.course > .section > span:nth-of-type(1) {
+  display: inline-block;
+  padding: 0.4em 0 0.2em 0;
+  width: 2em;
+  margin-right: 1em;
+  text-align: center;
+  color: white;
+}
+
+.course > .section > ul {
+  display: inline-block;
+  list-style-type: none;
+  margin-left: 1em;
+  vertical-align: middle;
+}
+
+.course > .section > ul > li > span:nth-of-type(1) {
+  display: inline-block;
+  margin-right: 2em;
+  width: 10em;
+  text-align: right;
+}
+.course > .section > ul > li > span:nth-of-type(2) {
+  display: inline-block;
+  width: 3em;
+  margin-right: 1em;
+}
+
+#subject-query { height: 9em; }
+#key-query { display: none; }
+#core-query { display: none; height: 7em; }
+#location-filters { height: 7em; }
+#expand { width: 5em; text-align: center; }
+
+/* customize filters */
+#status-filters .multi-check label { width: 50%; }
+#status-filters .multi-check label:nth-of-type(2n) { padding-left: 2em;}
+#status-filters .multi-check label:nth-of-type(2n+1) { padding-right: 2em;}
