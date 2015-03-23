@@ -1,0 +1,92 @@
+* {margin:0; padding:0; box-sizing: border-box;}
+
+/* *************** Tab CSS ****************** */
+.tabs { width: 100%; }
+.tabs > .header > label > input { display: none; }
+.tabs > .header > label > input:checked + span { border-bottom: 2px solid steelblue; }
+.tabs > .header > label > span { display: inline-block; padding: 0.2em; }
+.tabs > .header  { margin-bottom: 0.5em; }
+
+/* *************** Window CSS ****************** */
+.window { width: 100%; min-height: 2em; margin: 0 0 0.5em 0;
+  border: 1px solid #999999; border-radius: 5px; 
+  background: #fafafa; overflow: hidden;
+}
+.window.min { height: 2em !important; }
+.window.all { height: auto !important; }
+.window.max { width: 90vw !important; height: 90vh !important;
+  position: fixed; left: 50%; top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  background: rgba(255,255,255,0.97); z-index: 100;
+}
+.window > .controls { height: 2em; padding: 0.5em;
+  border-bottom: 1px solid #999999;
+}
+.window.min > .controls { border-width: 0; }
+
+.window > .controls > .title { display: inline-block; max-width: calc(100% - 9em);
+  color: #777777; background: rgba(0,0,0,0); 
+  font-family: sans-serif; font-size: 95%;
+  white-space: nowrap; overflow: scroll;
+}
+
+.window > .controls > input[type='submit'] { margin: -0.5em 0.5em 0 0.5em; color: steelblue;
+  font-size: 100%; display: none; display: none; vertical-align: middle;
+}
+.window[action] > .controls > input[type='submit'] { display: inline-block; }
+
+.window > .controls > i { width: 12px; height: 12px; margin: 0.1em 0.25em 0 0;
+  border-radius: 6px; border: 1px solid burlywood;
+  background: gold; float: right;
+}
+.window > .controls > i:nth-of-type(1) {
+  background: limegreen; border: 1px solid MediumSeaGreen ;
+}
+.window > .controls > i:nth-of-type(3) {
+  background: tomato; border: 1px solid red;
+}
+
+.window > .content {
+  display: block; width: 100%; padding: 0.5em;
+  height: calc(100% - 1.5em); overflow: scroll;
+}
+
+/* *************** Multi-check CSS ****************** */
+.multi-check { width: 100%; }
+.multi-check:empty { display: none; }
+
+.multi-check > .controls > .keyword { display: inline-block; width: calc(100% - 2em); 
+  margin: 0 0.5em 0.5em 0; font-size: 90%; color: #555555; }
+
+.multi-check > label { display: inline-block; width: 100%; margin: 0.25em -4px 0.25em 0; 
+  margin-right: -4px; color: #555555; vertical-align: top; text-transform: capitalize;
+}
+.multi-check > label > input { display: none; }
+.multi-check > label > input:checked + span { color: steelblue; }
+
+.multi-check > label > input + span:after {
+  content: ""; display: inline-block;
+  width: 0.5em; height: 1em; margin: -0.2em 0.7em 0 0;
+  border: 1px solid rgba(0,0,0,0); border-width: 0 1px 1px 0; 
+  transform: rotate(45deg); float: right;
+}
+.multi-check>label>input:checked+span:after { border-color: steelblue; }
+
+@media all and (min-width: 480px) and (max-width: 899px) {
+  .window.max .multi-check > label { width: 50%; margin-right: -4px;  }
+  .window.max .multi-check > label:nth-of-type(2n+1) {
+    border: 0px solid rgba(0,0,0,0); border-width: 0 25px 0 0;
+  }
+}
+@media all and (min-width: 900px) {
+  .window.max .multi-check > label { width: 33.33%; margin-right: -4px; }
+  .window.max .multi-check > label:nth-of-type(3n+1) {
+    border: 0px solid rgba(0,0,0,0); border-width: 0 25px 0 0;
+  }
+  .window.max .multi-check > label:nth-of-type(3n+2) {
+    border: 0px solid rgba(0,0,0,0); border-width: 0 25px 0 0;
+  }
+}
+
+/* *********** App CSS code ********** */
+/* .window { height: 11em; } */

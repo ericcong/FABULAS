@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>SOC jQuery</title>
+  <style>
+    @import url("/static/ui.css");
+    @import url("/static/soc.css");
+  </style>
+</head>
+
+<body>
+  <!-- all filters in this pane -->
+  <div class="filters">
+    <!-- search tab -->
+    <div class="tabs">
+      <div class="header">  
+        <span>Search: </span>
+        <label data-tab="#subject-query" onclick="$(this).parent().parent().find('.tab').hide(); $($(this).data('tab')).show();"><input type="radio" name="search" checked /><span>Subject</span></label>
+        <label data-tab="#key-query" onclick="$(this).parent().parent().find('.tab').hide(); $($(this).data('tab')).show();"><input type="radio" name="search" /><span>Keyword</span></label>
+        <label data-tab="#core-query" onclick="$(this).parent().parent().find('.tab').hide(); $($(this).data('tab')).show();"><input type="radio" name="search" /><span>Core Code</span></label>
+      </div>
+      <!-- subject search tab -->
+      <form class="window tab" action="/static/soc.html" id="subject-query">
+        <input type="hidden" name="semester" value="92015" /> 
+        <div class="controls">
+          <span class="title">Choose Subjects</span>
+          <input type="submit" value="Submit" />          
+          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+        </div>
+        <div class="content">
+          <div class="multi-check">
+            <div class="controls">
+              <input type="text" class="keyword" onkeyup="filterCheckList(this)" />
+              <input type="checkbox" class="checkall" onclick="$(this).parent().parent().find('label input').prop('checked', $(this).prop('checked'));" />
+            </div>
+            <!-- check list go here -->          
+          </div>
+        </div>
+      </form>        
+      <!-- keyword search tab -->
+      <form class="window tab" action="/static/soc.html" id="key-query">
+        <input type="hidden" name="semester" value="92015" /> 
+        <div class="controls">
+          <span class="title">Choose Keyword</span>
+          <input type="submit" value="Submit" />          
+          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+        </div>
+        <div class="content">
+          <div>
+            <input type="text" name="key" class="key" placeholder="keyword" />
+          </div>
+        </div>
+      </form>
+      <!-- core code search tab -->
+      <form class="window tab" action="/static/soc.html" id="core-query">
+        <input type="hidden" name="semester" value="92015" /> 
+        <div class="controls">
+          <span class="title">Choose Core Code</span>
+          <input type="submit" value="Submit" />          
+          <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+        </div>
+        <div class="content">
+          <div class="multi-check">
+            <!-- check list go here -->          
+          </div>
+        </div>
+      </form>        
+    </div>
+    <!-- end of search tab -->
+
+    <!-- list of filters -->
+    <!-- status filter -->
+    <form class="window" id="status-filters">
+      <div class="controls">
+        <span class="title">Status Filter</span>
+        <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+        <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      </div>
+      <div class="content">
+        <div class="multi-check">
+          <label><input type="checkbox" data-filter=".section.OS-true" checked /><span>Open</span></label>
+          <label><input type="checkbox" data-filter=".section.OS-false" checked /><span>Close</span></label>
+        </div>
+      </div>
+    </form>
+    <!-- course section online or hybrid type filter -->
+    <form class="window">
+      <div class="controls">
+        <span class="title">Type Filter</span>
+        <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+        <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      </div>
+      <div class="content">
+        <div class="multi-check">
+          <label><input type="checkbox" data-filter=".section.CT-ONCAMPUS" checked /><span>Traditional</span></label>
+          <label><input type="checkbox" data-filter=".section.CT-ONLINE" checked /><span>Online</span></label>
+          <label><input type="checkbox" data-filter=".section.CT-HYBRID" checked /><span>Hybrid</span></label>
+        </div>
+      </div>
+    </form>
+    <!-- date time filter -->
+    <form class="window">
+      <div class="controls">
+        <span class="title">Day/Time Filter</span>
+        <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+        <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      </div>
+      <div class="content">
+        <table>
+          <tr>
+            <td></td><td>M</td><td>T</td><td>W</td><td>Th</td><td>F</td><td>S</td><td>SU</td>
+          </tr>
+          <tr>
+            <td>Morning</td>
+            <td><input type="checkbox" data-filter=".section.MT-MA" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-TA" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-WA" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-THA" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-FA" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-SA" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-SUA" checked /></td>
+          </tr>
+          <tr>
+            <td>Afteroon</td>
+            <td><input type="checkbox" data-filter=".section.MT-MP" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-TP" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-WP" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-THP" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-FP" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-SP" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-SUP" checked /></td>
+          </tr>
+          <tr>
+            <td>Evening</td>
+            <td><input type="checkbox" data-filter=".section.MT-MN" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-TN" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-WN" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-THN" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-FN" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-SN" checked /></td>
+            <td><input type="checkbox" data-filter=".section.MT-SUN" checked /></td>
+          </tr>
+        </table>
+      </div>
+    </form>
+    <!-- meeting location filter -->
+    <form class="window" id="location-filters">
+      <div class="controls">
+        <span class="title">Location Filter</span>
+        <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+        <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      </div>
+      <div class="content">
+        <div class="multi-check">
+        </div>
+      </div>
+    </form>
+    <!-- course level filter -->
+    <form class="window min" id="level-filters">
+      <div class="controls">
+        <span class="title">Level Filter</span>
+        <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+        <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      </div>
+      <div class="content">
+        <div class="multi-check dynamic">
+        </div>
+      </div>
+    </form>
+    <!-- offfering unit or school filter -->
+    <form class="window min" id="unit-filters">
+      <div class="controls">
+        <span class="title">Unit Filter</span>
+        <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+        <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      </div>
+      <div class="content">
+        <div class="multi-check dynamic">
+        </div>
+      </div>
+    </form>
+    <!-- course subject filter -->
+    <form class="window min" id="subject-filters">
+      <div class="controls">
+        <span class="title">Subject Filter</span>
+        <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+        <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+      </div>
+      <div class="content">
+        <div class="multi-check dynamic">
+        </div>
+      </div>
+    </form>
+  </div>
+  <!-- End of Filters Pane -->
+
+  <!-- window for search result courses -->
+  <form class="window" id="query-result">
+    <div class="controls">
+      <span class="title">Query Result</span><span id="expand" class="title">+</span>
+      <input type="submit" value="Submit" onclick="$(this).parent().parent().removeClass('max all').addClass('min')" />
+      <i onclick="$(this).parent().parent().removeClass('min all').addClass('max')"></i><i onclick="$(this).parent().parent().removeClass('min max').addClass('all')"></i><i onclick="$(this).parent().parent().removeClass('max all').addClass('min')"></i>
+    </div>
+    <div class="content">
+      <div class="summary"></div>
+      <div class="result"></div>
+      <a href="https://github.com/tevjef/Rutgers-Course-Tracker/blob/master/response-samples/courses-nk-nb.json">sample data</a>
+    </div>
+  </form>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="/static/ui.js"></script>
+  <script src="/static/soc.js"></script>
+
+</body>
+
+</html>
