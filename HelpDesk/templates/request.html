@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Problem Request</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css" />
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/static/js/bootstrap.min.js"></script>
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Request Form <small>Submit your problem</small></h1>
+      </div>
+
+      <!-- Registration form - START -->
+      <div class="container">
+        <div class="row">
+          <form role="form" action="/submit-problem" method="post">
+            <div class="col-lg-6">
+              <div class="well well-sm"><strong><span class="glyphicon glyphicon-asterisk"></span>Required Field</strong></div>
+
+              <div class="form-group">
+                <label for="InputName">Name</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" name="InputName" id="InputName" placeholder="Enter Name" required>
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="InputEmail">Email</label>
+                <div class="input-group">
+                  <input type="email" class="form-control" id="InputEmailFirst" name="InputEmail" placeholder="Enter Email" required>
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="InputEmail">Problem Title</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="InputTitle" name="InputTitle" placeholder="Enter Problem Title" required>
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="InputMessage">Describe Your Problem</label>
+                <div class="input-group">
+                  <textarea name="InputMessage" id="InputMessage" class="form-control" rows="5" required></textarea>
+                  <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="InputFile">Select File</label>
+                <div class="input-group">
+                  <input type="file" class="file" id="InputFile" name="InputFile">
+                </div>
+              </div>
+
+              <input type="submit" name="submit" id="submit" value="Submit" class="btn btn-info pull-right">
+            </div>
+          </form>
+          
+        </div>
+      </div>
+      <!-- Registration form - END -->
+
+  </body>
+</html>

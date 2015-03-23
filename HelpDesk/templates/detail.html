@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<head>
+  <title>Problem Detail</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css" />
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="/static/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h1>Problem detail</h1>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
+          <div class="panel panel-info">
+
+            {% for detail in details %}
+            <div class="panel-heading">
+              <h3 class="panel-title">Problem ID: #{{ detail[0] }}</h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=100" class="img-circle"> </div>
+                  <div class=" col-md-9 col-lg-9 "> 
+                    <table class="table table-user-information">
+                      <tbody>
+                        
+                        <tr>
+                          <td>Name:</td>
+                          <td>{{ detail[1] }}</td>
+                        </tr>
+                        <tr>
+                          <td>Email:</td>
+                          <td>{{ detail[2] }}</td>
+                        </tr>
+                        <tr>
+                          <td>Time:</td>
+                          <td>{{ detail[6] }}</td>
+                        </tr>
+                        <tr>
+                          <td>Problem Title:</td>
+                          <td>{{ detail[3] }}</td>
+                        </tr>
+                        <tr>
+                          <td>Problem Description:</td>
+                          <td>{{ detail[4] }}</td>
+                        </tr>
+                                  </tbody>
+                    </table>
+
+                    <a href="#" class="btn btn-primary">My Sales Performance</a>
+                    <a href="#" class="btn btn-primary">Team Sales Performance</a>
+                  </div>
+              </div>
+            </div>
+            {% endfor %}
+
+            <div class="panel-footer">
+              <a data-original-title="Broadcast Message" data-toggle="tooltip" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i></a>
+              <span class="pull-right">
+                <a href="edit.html" data-original-title="Edit this user" data-toggle="tooltip" type="button" class="btn btn-sm btn-warning"><i class="glyphicon glyphicon-edit"></i></a>
+                <a data-original-title="Remove this user" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
