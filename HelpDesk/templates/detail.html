@@ -34,7 +34,6 @@
                   <div class=" col-md-9 col-lg-9 "> 
                     <table class="table table-user-information">
                       <tbody>
-                        
                         <tr>
                           <td>Name:</td>
                           <td>{{ detail[1] }}</td>
@@ -55,23 +54,16 @@
                           <td>Problem Description:</td>
                           <td>{{ detail[4] }}</td>
                         </tr>
-                                  </tbody>
+                        <tr>
+                          <td>Uploaded File:</td>
+                          <td><a href={{ url_for('uploaded_file', filename = detail[5]) }}>{{ detail[5] }}</a></td>
+                        </tr>
+                      </tbody>
                     </table>
-
-                    <a href="#" class="btn btn-primary">My Sales Performance</a>
-                    <a href="#" class="btn btn-primary">Team Sales Performance</a>
                   </div>
               </div>
             </div>
             {% endfor %}
-
-            <div class="panel-footer">
-              <a data-original-title="Broadcast Message" data-toggle="tooltip" type="button" class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-envelope"></i></a>
-              <span class="pull-right">
-                <a href="edit.html" data-original-title="Edit this user" data-toggle="tooltip" type="button" class="btn btn-sm btn-warning"><i class="glyphicon glyphicon-edit"></i></a>
-                <a data-original-title="Remove this user" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
-              </span>
-            </div>
 
           </div>
         </div>

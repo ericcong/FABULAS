@@ -1,8 +1,14 @@
-from flask import Flask, render_template, request, redirect, session, g
+from flask import Flask, render_template, request, redirect, session, url_for, g, send_from_directory
 from time import gmtime, strftime
+from werkzeug import secure_filename
 import sqlite3
+import os
+
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 problems = []
 details = []
@@ -20,17 +26,29 @@ def teardown_request(exception):
 def request_controller():
     return render_template('request.html')
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
 @app.route('/submit-problem', methods = ['POST'])
 def submit_problem():
     name = request.form['InputName']
     email = request.form['InputEmail']
     problem_title = request.form['InputTitle']
     description = request.form['InputMessage']
-    usrfile = request.form['InputFile']
+    #file = request.form['InputFile']
+    file = request.files['InputFile']
     current_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    g.db.execute("INSERT INTO user_problems(name, email, title, description, file, time) VALUES (?, ?, ?, ?, ?, ?)", [name, email, problem_title, description, usrfile, current_time])
+    g.db.execute("INSERT INTO user_problems(name, email, title, description, file, time) VALUES (?, ?, ?, ?, ?, ?)", [name, email, problem_title, description, file.filename, current_time])
     g.db.commit()
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     return redirect('/request')
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/problems')
 def problems():
