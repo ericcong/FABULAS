@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>User Login</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
+
+    <!-- Google Style Login -->
+    <link rel="stylesheet" type="text/css" href="/static/css/google-style-login.css">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/static/js/bootstrap.min.js"></script>
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6 col-md-4 col-md-offset-4">
+          <div class="account-wall">
+            <div id="my-tab-content" class="tab-content">
+
+              <div class="tab-pane active" id="login">
+                <img class="profile-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
+                                         alt="">
+                <form class="form-signin" action="login" method="post">
+                  <input type="text" class="form-control" placeholder="Username" required autofocus>
+                  <input type="password" class="form-control" placeholder="Password" required>
+                  <input type="submit" class="btn btn-lg btn-default btn-block" value="Sign In" />
+                </form>
+                <div id="tabs" data-tabs="tabs">
+                  <p class="text-center"><a href="#register" data-toggle="tab">Need an Account?</a></p>
+                </div>
+              </div>
+
+              <div class="tab-pane" id="register">
+                <form class="form-signin" action="signup" method="post">
+                  <input type="text" class="form-control" placeholder="User Name ..." required autofocus>
+                  <input type="email" class="form-control" placeholder="Emaill Address ..." required>
+                  <input type="password" class="form-control" placeholder="Password ..." required>
+                  <input type="submit" class="btn btn-lg btn-default btn-block" value="Sign Up" />
+                </form>
+                <div id="tabs" data-tabs="tabs">
+                  <p class="text-center"><a href="#login" data-toggle="tab">Have an Account?</a></p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
