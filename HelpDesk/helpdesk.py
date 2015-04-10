@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, url_for, g, send_from_directory
 from time import gmtime, strftime
 from werkzeug import secure_filename
+from flask.ext.principal import Principal, Permission, identity_changed, Indentity, identity_loaded
 import sqlite3
 import os
 
@@ -8,14 +9,21 @@ UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
+Principal(app)
+
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 problems = []
 details = []
 
+# Define Permission tags here.
+logged_in_permission = Permission(('logged in'))
+role_admin_permission = Permission(('role', 'admin'))
+role_client_permission = Permission(('role', 'client'))
+
 @app.before_request
 def before_request():
-    g.db = sqlite3.connect("problems.db")
+    g.db = sqlite3.connect("mydb.db")
 
 @app.teardown_request
 def teardown_request(exception):
@@ -26,16 +34,50 @@ def teardown_request(exception):
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
     if (request.method == 'POST'):
-        return "the method is post"
+        #return "the method is post"
+        #auth_type = ""
+        username = request.form['InputUserName']
+        password = request.form['InputPassword']
+        records = g.db.execute("SELECT * FROM users WHERE username = ?", [username]).fetchall()
+        if records:
+            user_id = records[0][0]
+        else:
+            return "!!!username not exists!!!"
+
+        identity_changed.send(app, identity = Identity(user_id))
+        return "!!!You have successfully logged in!!!"
     else:
         return render_template('login.html')
+
+# Get User Information
+@identity_loaded.connect_via(app)
+def get_user_info(sender, indentity):
+    identity.provides.add(('logged in'))
+    #if hasattr(identity, 'id'):
+    #    identity.provides.add(('id', identity.id))
+    records = g.db.execute("SELECT role FROM users WHERE uid = ?", [identity.id]).fetchall()
+    for record in records:
+        identity.provides.add(('role', record[0]))
 
 #SignUp action
 @app.route('/signup', methods = ['POST'])
 def signup():
-    
+    username = request.form['InputUserName']
+    email = request.form['InputEmail']
+    password = request.form['InputPassword']
+
+    # TODO: get input role
+
+    records = g.db.execute("SELECT * FROM users WHERE username = ?", [username]).fetchall()
+    if records:
+        return "!!!username already exists!!!"
+    else:
+        g.db.execute("INSERT INTO users(username, email, password) VALUES(?, ?, ?)", [username, email, password])
+        g.db.commit()
+        return redirect('/login')
 
 @app.route('/request')
+@role_client_permission.require(403)
 def request_controller():
     return render_template('request.html')
 
@@ -68,12 +110,14 @@ def uploaded_file(filename):
 
 #The Problems List Page
 @app.route('/problems')
+@role_admin_permission.require(403)
 def problems():
     problems = g.db.execute("SELECT * FROM user_problems").fetchall()
     return render_template('problems.html', problems = problems)
 
 #The Problem detail after clicked on row
 @app.route('/detail/<pid>')
+@role_admin_permission.require(403)
 def detail(pid):
     details = g.db.execute("SELECT * FROM user_problems WHERE pid = ?", [pid]).fetchall()
     return render_template('detail.html', details = details)
