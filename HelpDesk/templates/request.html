@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="/static/css/navbar-fixed-top.css">
     <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css" />
 
@@ -16,67 +17,88 @@
     <script src="/static/js/bootstrap.min.js"></script>
   </head>
 
+
+
   <body>
-
-    <div class="container">
-
-      <div class="page-header">
-        <h1>Request Form <small>Submit your problem</small></h1>
-      </div>
-
-      <!-- Registration form - START -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
-        <div class="row">
-          <form role="form" action="/submit-problem" method="post" enctype=multipart/form-data>
-            <div class="col-lg-6">
-              <div class="well well-sm"><strong><span class="glyphicon glyphicon-asterisk"></span>Required Field</strong></div>
-
-              <div class="form-group">
-                <label for="InputName">Name</label>
-                <div class="input-group">
-                  <input type="text" class="form-control" name="InputName" id="InputName" placeholder="Enter Name" required>
-                  <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="InputEmail">Email</label>
-                <div class="input-group">
-                  <input type="email" class="form-control" id="InputEmailFirst" name="InputEmail" placeholder="Enter Email" required>
-                  <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="InputEmail">Problem Title</label>
-                <div class="input-group">
-                  <input type="text" class="form-control" id="InputTitle" name="InputTitle" placeholder="Enter Problem Title" required>
-                  <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="InputMessage">Describe Your Problem</label>
-                <div class="input-group">
-                  <textarea name="InputMessage" id="InputMessage" class="form-control" rows="5" required></textarea>
-                  <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="InputFile">Select File</label>
-                <div class="input-group">
-                  <input type="file" class="file" id="InputFile" name="InputFile">
-                </div>
-              </div>
-
-              <input type="submit" name="submit" id="submit" value="Submit" class="btn btn-info pull-right">
-            </div>
-          </form>
-          
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigation">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Helpdesk Service <span class="label label-success text-capitalize">OIT</span></a>
+        </div>
+    
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="navigation">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">About</a></li>
+                <li><a href="#">Features</a></li>
+                <li><button type="button" class="btn btn-success navbar-btn btn-circle">Sign in</button></li>
+            </ul>
         </div>
       </div>
-      <!-- Registration form - END -->
+    </nav>
 
+    <!-- Registration form - START -->
+    <div class="container"> 
+      <div class="header">
+        <h1>Request Form <small>Submit your problem</small></h1>
+      </div>
+      <div class="row">
+        <form role="form" action="/submit-problem" method="post" enctype=multipart/form-data>
+          <div class="col-lg-6">
+            <div class="well well-sm"><strong><span class="glyphicon glyphicon-asterisk"></span>Required Field</strong></div>
+
+            <div class="form-group">
+              <label for="InputName">Name</label>
+              <div class="input-group">
+                <input type="text" class="form-control" name="InputName" id="InputName" placeholder="Enter Name" required>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="InputEmail">Email</label>
+              <div class="input-group">
+                <input type="email" class="form-control" id="InputEmailFirst" name="InputEmail" placeholder="Enter Email" required>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="InputEmail">Problem Title</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="InputTitle" name="InputTitle" placeholder="Enter Problem Title" required>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="InputMessage">Describe Your Problem</label>
+              <div class="input-group">
+                <textarea name="InputMessage" id="InputMessage" class="form-control" rows="5" required></textarea>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-asterisk"></span></span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="InputFile">Select File</label>
+              <div class="input-group">
+                <input type="file" class="file" id="InputFile" name="InputFile">
+              </div>
+            </div>
+
+            <input type="submit" name="submit" id="submit" value="Submit" class="btn btn-info pull-right">
+          </div>
+        </form>
+
+      </div>
+    </div>
+    <!-- Registration form - END -->
   </body>
 </html>
