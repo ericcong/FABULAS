@@ -82,6 +82,23 @@ def queryUsers():
 	users = service.queryUsers(query)
 	return (json.dumps({"data": users, "message":"Users Retrieved."}))
 
+# HTTP GET method should NOT use msg body to communicate with server
+@app.route('/json/coas/query', methods=['GET, POST'])
+def queryCOAs():
+	# get whole query string or individual query param
+	print request.query_string
+	#print request.args.get(url_param_name, default_value)
+
+	# convert whole query_string to json
+	#print urlparse.parse_qs(request.query_string)
+	# url param may have array as value id=1&id=2&id=3 {"id": ["1", "2, "3]}
+	query = urlparse.parse_qs(request.query_string)
+	print query
+	#print urlparse.parse_qs(request.query_string)['id'][0]
+
+	users = service.queryCOAs(query)
+	return (json.dumps({"data": users, "message":"COAs Retrieved."}))
+
 # special jsonp for local prototype when app debug mode
 @app.route('/static/json/users/create', methods=['GET', 'POST'])
 # HTTP PUT, POST method use msg body to pass data either in form or json format
@@ -188,6 +205,9 @@ def postProcess(resp):
 	if (JSONP and request.args.get(JSONP_CALLBACK, '')):
 		resp.set_data(request.args.get(JSONP_CALLBACK, '')+'('+ resp.get_data() +')')
 		resp.mimetype = "application/javascript"
+
+	if '.gz' in request.url:
+		resp.headers["Content-Encoding"] = "gzip"
 
 	# if (app.debug):
 	# 	resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"

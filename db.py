@@ -7,6 +7,7 @@ SECRET_KEY = 'development key'
 USERNAME = 'admin'
 PASSWORD = 'default'
 
+
 def connect_db():
     return sqlite3.connect(DATABASE)
 
