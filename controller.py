@@ -35,6 +35,12 @@ def index():
 def whoami():
 	return 'Logged in as %s' % escape(session['username'])
 
+@app.route('/json/coa')
+def coa():
+	coa = {}
+	coa["123456"] = "654321"
+	return (json.dumps(coa))
+
 # JPSONP cross domain is ONLY support with HTTP GET method
 @app.route('/json/users', methods=['GET', 'POST'])
 def getUsers():
@@ -159,15 +165,15 @@ def logout():
     session.pop('username', None)
     return (json.dumps({"message":"Logout Success."}))
 
-@app.before_request
-def preProcess():
-	if 'static' in request.url:
-		return
-	else:
-		if 'username' in session:
-			return
-		else:
-			abort(401)
+# @app.before_request
+# def preProcess():
+# 	if 'static' in request.url:
+# 		return
+# 	else:
+# 		if 'username' in session:
+# 			return
+# 		else:
+# 			abort(401)
 
 @app.after_request
 def postProcess(resp):
