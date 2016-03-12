@@ -37,6 +37,9 @@ def whoami():
 
 @app.route('/json/coa')
 def coa():
+	query = urlparse.parse_qs(request.query_string)
+	print query
+	print query["id[]"]
 	coa = {}
 	coa["123456"] = "654321"
 	return (json.dumps(coa))

@@ -44,7 +44,7 @@
       function lookup() {
         var input = $("#input").val();
         var matches = input.match(/\b(\d{6}|\d{10})\b/gm);
-        $.getJSON("/json/coa", function( map ) {
+        $.getJSON("/json/coa", {'id':matches}, function( map ) {
           var x = "Mapping:\n";
           for (i in matches) {
             var r = map[matches[i]]?map[matches[i]]:matches[i];
