@@ -6,32 +6,51 @@
     <meta name="google" value="notranslate">
     <title>COA Tool</title>
     <style>
-      body { text-align: center; }
-      button, textarea { 
+      body { text-align: center; margin:0; padding: 0; }
+
+      .input, .output {
+        width: calc(50% - 80px);
         display: inline-block; 
-        margin: 8px;
+        margin: 16px 32px;
         vertical-align: middle;
-      }
-      textarea {
-        width: calc(40% - 50px);
-      }
-      button { 
-        font-size: 100%; 
-        padding: 6px; 
+        height: 90vh;
+        text-align: center;
+        position: relative;
+        font-size: 110%;
       }
 
-      textarea {
+      button { 
+        display: block;
+        font-size: 100%; 
+        padding: 6px; 
+        margin: 16px auto;
+      }
+
+      .input > textarea {
+        width: 100%;
         font-size: 110%;
-        height: 90vh;
+      }
+      .output {
+        text-align: left;
+      }
+
+      #input {
+        height: calc(90vh - 200px);
+        position: absolute;
+        left: 0;
+        bottom: 0;
       }
     </style> 
   </head>
 
   <body>
-    <textarea name="" id="input" placeholder="Input"></textarea>
-    <button onclick="lookup()">Convert</button>
-    <textarea name="" id="output" placeholder="Output"></textarea>
-    
+    <div class="input">
+      <p>Please type in legacy 10-digits GL numbers, or 6-digits fund source numbers, or simplely copy & paste your source code. This conversion tool will automatically identify those 6 or 10 digits numbers and convert them. If there is no mapping found, those numbers will be marked by ? mark.</p>
+      <button onclick="lookup()">Convert</button>
+      <textarea name="" id="input" placeholder="Input"></textarea>
+    </div>
+    <textarea name="" id="output" placeholder="Output" class="output"></textarea>    
+
     <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 
     <script>
@@ -47,11 +66,21 @@
         $.getJSON("/json/coa", {'id':matches}, function( map ) {
           var x = "Mapping:\n";
           for (i in matches) {
-            var r = map[matches[i]]?map[matches[i]]:matches[i];
+            var r = map[matches[i]]?map[matches[i]]:"?"+matches[i];
             x = x + matches[i] + " : " + r + "\n";
             input = input.replace(matches[i], r);
           }
-          $("#output").val(x+"\n\nConverted:\n"+input);        
+          var z = [];
+          for (i in map) {
+            xx = map[i];
+            z.push(i + " : " + xx.substring(0, 3)+"-"+xx.substring(3, 7)+"-"+xx.substring(7, 11)+"-"+xx.substring(11, 15)+"-"+xx.substring(15, 18)+"-"+xx.substring(18, 22)+"-"+xx.substring(22, 27)+"-"+xx.substring(27, 31)+"-"+xx.substring(31, 34)+"-"+xx.substring(34, 39));
+          }
+          z.sort();
+          var y = "Deatils:\n";
+          for (i in z) {
+            y = y + z[i] + "\n";
+          }
+          $("#output").val(x+"\n\nConverted:\n"+input+"\n\n"+y);        
         });        
       }
     </script>    

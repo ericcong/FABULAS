@@ -40,8 +40,8 @@ def coa():
 	query = urlparse.parse_qs(request.query_string)
 	print query
 	print query["id[]"]
-	coa = {}
-	coa["123456"] = "654321"
+	coa = service.queryCOAs(query["id[]"])
+	print coa
 	return (json.dumps(coa))
 
 # JPSONP cross domain is ONLY support with HTTP GET method
@@ -226,4 +226,4 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="172.16.149.14", port=int("8080"), debug=True)

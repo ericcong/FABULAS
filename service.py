@@ -21,4 +21,8 @@ def queryCOAs(legacy):
 	d = {}
 	for e in r:
 		d[e['legacy']]=e['coa']
+	r = query("select FUND_SOURCE, LOCATION_CD || FUND_TYPE_CD || BUSINESS_CD, PRE_LEGACY_CC, UNIT_CD || DIVISION_CD || ORGANIZATION_CD || LOCATION_CD || FUND_TYPE_CD || BUSINESS_CD || NATURAL_ACCT_CD || ACTIVITY_CD || INTRAUNIT_CD || FUTURE_CD from mapping where FUND_SOURCE in ("+"'"+"','".join(legacy)+"'"+") order by FUND_SOURCE", ["legacy_fund_source", "coa_lfb", "legacy", "coa"])
+	for e in r:
+		d[e['legacy_fund_source']]=e['coa_lfb']
+		d[e['legacy']]=e['coa']		
 	return d
